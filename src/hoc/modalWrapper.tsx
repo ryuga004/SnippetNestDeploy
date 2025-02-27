@@ -10,16 +10,16 @@ interface ModalWrapperProps {
 }
 
 const ModalWrapper = ({ children, handleClose, heading }: ModalWrapperProps) => {
-    const parentRef = useRef<HTMLDivElement | null>(null);
+    const childRef = useRef<HTMLDivElement | null>(null);
 
-    useClickOutside(parentRef, handleClose);
+    useClickOutside(childRef, handleClose);
     useCloseOnScroll(handleClose);
     useCloseOnEscape(handleClose);
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ">
             <div
-                ref={parentRef}
+                ref={childRef}
                 className="bg-gray-800 flex flex-col gap-4 shadow-xl rounded-lg p-2  w-11/12 max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg relative"
             >
 
