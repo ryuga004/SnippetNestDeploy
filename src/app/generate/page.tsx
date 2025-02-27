@@ -123,7 +123,10 @@ export default function AIGeneratorPage() {
             }
         }
         if (snippetNew) {
-            dispatch(addSnippet(snippetNew));
+            if (snippets.some(snippet => snippet.source_code === snippetNew.source_code)) {
+                alert("SNIPPET ALREADY EXISTS");
+            } else
+                dispatch(addSnippet(snippetNew));
         }
         // if(snippets.filter)
         //     const isDuplicate = snippets.some(snippet => snippet.source_code === snippetNew.source_code);

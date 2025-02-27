@@ -28,6 +28,7 @@ export default function SnippetsPage() {
 
     // Retrieve snippets from Redux store
     const snippetsData = useAppSelector((state) => state.snippets);
+    const { filters, handleChange, resetFilters, filteredSnippets } = useSnippetFilters(snippetsData?.snippets || []);
 
     // Show loading if snippets are still being fetched
     if (snippetsData?.loading) {
@@ -35,7 +36,6 @@ export default function SnippetsPage() {
     }
 
     // Initialize filters
-    const { filters, handleChange, resetFilters, filteredSnippets } = useSnippetFilters(snippetsData?.snippets || []);
 
     return (
         <SectionWrapper>

@@ -33,7 +33,7 @@ const Home = () => {
               <h2 className="text-3xl font-bold mb-6">Not finding what you need?</h2>
               <p className="text-xl text-muted-foreground mb-8">
                 Let our AI create a custom snippet tailored to your specific requirements.
-                Just describe what you need, and we'll generate it for you.
+                Just describe what you need and we will generate it for you.
               </p>
               <Link href="/generate">
                 <Button size="lg" className="gap-2">
@@ -60,8 +60,8 @@ const Home = () => {
                   ))}
                 </div>
                 <p className="text-muted-foreground mb-4">
-                  "The snippets are not only helpful but also incredibly easy to integrate.
-                  Saved me hours of coding!"
+                  The snippets are not only helpful but also incredibly easy to integrate.
+                  Saved me hours of coding!
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10" />

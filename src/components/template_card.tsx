@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import Image from "next/image";
 
 interface SnippetCardProps {
     snippet: Snippet;
@@ -40,7 +41,7 @@ export default function SnippetCard({ snippet }: SnippetCardProps) {
                 <CardFooter className=" p-4 flex bg-black justify-between items-center">
                     {/* Author */}
                     <div className="flex items-center gap-3 bg-black">
-                        <img
+                        <Image
                             src={snippet.author.avatar}
                             alt={snippet.author.username}
                             className="w-8 h-8 rounded-full object-cover"
