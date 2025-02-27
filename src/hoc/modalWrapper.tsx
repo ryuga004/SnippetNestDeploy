@@ -11,7 +11,7 @@ interface ModalWrapperProps {
 
 const ModalWrapper = ({ children, handleClose, heading }: ModalWrapperProps) => {
     const childRef = useRef<HTMLDivElement | null>(null);
-    // fixes ref
+    // fixes ref for chid 
     useClickOutside(childRef, handleClose);
     useCloseOnScroll(handleClose);
     useCloseOnEscape(handleClose);
