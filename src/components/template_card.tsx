@@ -2,11 +2,11 @@
 
 import { Snippet } from "@/lib/types";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import Image from "next/image";
 
 interface SnippetCardProps {
     snippet: Snippet;
@@ -44,6 +44,8 @@ export default function SnippetCard({ snippet }: SnippetCardProps) {
                         <Image
                             src={snippet.author.avatar}
                             alt={snippet.author.username}
+                            height={25}
+                            width={25}
                             className="w-8 h-8 rounded-full object-cover"
                         />
                         <span className="text-sm text-gray-200">
