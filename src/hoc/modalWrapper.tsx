@@ -1,4 +1,3 @@
-import { useClickOutside } from "@/hooks/onClickOutside";
 import { useCloseOnEscape } from "@/hooks/onEscapeClose";
 import { useCloseOnScroll } from "@/hooks/onScrollClose";
 import { ReactNode, useRef } from "react";

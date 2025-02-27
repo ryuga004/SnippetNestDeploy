@@ -1,13 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { Heart } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 import { Snippet } from "@/lib/types";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 
 interface SnippetCardProps {
     snippet: Snippet;

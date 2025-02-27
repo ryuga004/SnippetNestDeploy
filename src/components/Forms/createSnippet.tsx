@@ -25,7 +25,6 @@ export default function CreateSnippetForm({ handleClose }: { handleClose: () => 
         handleSubmit,
         control,
         setValue,
-        getValues,
         watch,
     } = useForm<Snippet>({
         defaultValues: {

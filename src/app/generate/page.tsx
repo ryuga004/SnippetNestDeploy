@@ -9,6 +9,7 @@ import SectionWrapper from "@/hoc/sectionWrapper";
 import { mockUser } from "@/lib/data";
 import { GeneratedCodeType, Snippet } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { addSnippet } from "@/redux/slice/snippetSlice";
 import { motion } from "framer-motion";
 import { Clipboard, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
@@ -102,23 +103,27 @@ export default function AIGeneratorPage() {
     };
     const currentUser = mockUser;
     const dispatch = useAppDispatch();
-    const snippets = useAppSelector(state=>state.snippets.snippets)
+    const snippets = useAppSelector(state => state.snippets.snippets)
     const handleMakeSnippetSubmit = () => {
-        if(!generatedCode){
-            return ;
+        if (!generatedCode) {
+            return;
         }
         console.log("generatedCode", generatedCode);
-        const snippetNew : Snippet = {
-            id : crypto.randomUUID(),
-            title : generatedCode?.title ,
-            description : generatedCode?.description,
-            language : generatedCode?.language,
-            source_code : generatedCode?.source_code,
-            author : {
-                author_id : currentUser.id,
-                username : currentUser.username,
-                avatar : currentUser.avatar,
+        const snippetNew: Snippet = {
+            id: crypto.randomUUID(),
+            title: generatedCode?.title,
+            description: generatedCode?.description,
+            language: generatedCode?.language,
+            source_code: generatedCode?.source_code,
+            tags: ["AI Generated"],
+            author: {
+                author_id: currentUser.id,
+                username: currentUser.username,
+                avatar: currentUser.avatar,
             }
+        }
+        if (snippetNew) {
+            dispatch(addSnippet(snippetNew));
         }
         // if(snippets.filter)
         //     const isDuplicate = snippets.some(snippet => snippet.source_code === snippetNew.source_code);

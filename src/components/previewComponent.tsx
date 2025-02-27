@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from "react-live";
+import { LiveError, LivePreview, LiveProvider } from "react-live";
 
 const scope = { React }; // Any dependencies the JSX might use
 
