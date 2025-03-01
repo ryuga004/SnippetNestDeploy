@@ -24,6 +24,7 @@ const Navbar = () => {
                 <div className="hidden md:flex gap-6">
                     <NavLink href="/" pathname={pathname}>Home</NavLink>
                     <NavLink href="/snippets" pathname={pathname}>Snippets</NavLink>
+                    <NavLink href="/problems" pathname={pathname}>Practice</NavLink>
                     <NavLink href="/generate" pathname={pathname}>AI Generator</NavLink>
                     <Button onClick={() => setOpenModal(true)}>Create Snippet</Button>
                 </div>
@@ -39,6 +40,7 @@ const Navbar = () => {
                 <div className="z-20 absolute top-16 left-0 w-full bg-gray-900 p-4 flex flex-col items-center gap-4 md:hidden">
                     <NavLink href="/" pathname={pathname} onClick={() => setMenuOpen(false)}>Home</NavLink>
                     <NavLink href="/snippets" pathname={pathname} onClick={() => setMenuOpen(false)}>Snippets</NavLink>
+                    <NavLink href="/problems" pathname={pathname} onClick={() => setMenuOpen(false)}>Practice</NavLink>
                     <NavLink href="/generate" pathname={pathname} onClick={() => setMenuOpen(false)}>AI Generator</NavLink>
                     <Button onClick={() => { setOpenModal(true); setMenuOpen(false); }}>Create Snippet</Button>
                 </div>

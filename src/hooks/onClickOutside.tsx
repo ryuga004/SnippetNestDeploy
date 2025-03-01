@@ -12,7 +12,7 @@ export const useClickOutside = (modalRef: React.RefObject<HTMLDivElement | null>
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [handleClose]);
+    }, [handleClose, modalRef]);
 
     return modalRef;
 };

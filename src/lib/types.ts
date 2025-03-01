@@ -26,3 +26,14 @@ export interface GeneratedCodeType {
     // tags : string [],
     source_code: string,
 }
+
+export interface CodingProblemType {
+    id: string,
+    title: string,
+    description: string,
+    inputFormat: string,
+    outputFormat: string,
+    exampleInput: string,
+    exampleOutput: string,
+    constraints: string,
+}
