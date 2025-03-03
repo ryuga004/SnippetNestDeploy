@@ -9,7 +9,16 @@ export const problems: CodingProblemType[] = [
         outputFormat: "The factorial of N.",
         exampleInput: "5",
         exampleOutput: "120",
-        constraints: "1 ≤ N ≤ 10"
+        constraints: "1 ≤ N ≤ 10",
+        difficuly: "easy",
+        topic: ["Mathematics"],
+        testCases: [
+            { input: "1", expectedOutput: "1" },
+            { input: "2", expectedOutput: "2" },
+            { input: "3", expectedOutput: "6" },
+            { input: "4", expectedOutput: "24" },
+            { input: "5", expectedOutput: "120" }
+        ]
     },
     {
         id: "2",
@@ -19,7 +28,16 @@ export const problems: CodingProblemType[] = [
         outputFormat: "Sum of the digits of N.",
         exampleInput: "1234",
         exampleOutput: "10",
-        constraints: "1 ≤ N ≤ 10000"
+        constraints: "1 ≤ N ≤ 10000",
+        difficuly: "easy",
+        topic: ["Mathematics"],
+        testCases: [
+            { input: "1234", expectedOutput: "10" },
+            { input: "9999", expectedOutput: "36" },
+            { input: "1001", expectedOutput: "2" },
+            { input: "56", expectedOutput: "11" },
+            { input: "5", expectedOutput: "5" }
+        ]
     },
     {
         id: "3",
@@ -29,7 +47,16 @@ export const problems: CodingProblemType[] = [
         outputFormat: "The reversed integer.",
         exampleInput: "1234",
         exampleOutput: "4321",
-        constraints: "1 ≤ N ≤ 100000"
+        constraints: "1 ≤ N ≤ 100000",
+        difficuly: "easy",
+        topic: ["Mathematics"],
+        testCases: [
+            { input: "1234", expectedOutput: "4321" },
+            { input: "5678", expectedOutput: "8765" },
+            { input: "100", expectedOutput: "1" },
+            { input: "909", expectedOutput: "909" },
+            { input: "500", expectedOutput: "5" }
+        ]
     },
     {
         id: "4",
@@ -39,7 +66,16 @@ export const problems: CodingProblemType[] = [
         outputFormat: "Yes if N is prime, otherwise No.",
         exampleInput: "7",
         exampleOutput: "Yes",
-        constraints: "1 ≤ N ≤ 10^6"
+        constraints: "1 ≤ N ≤ 10^6",
+        difficuly: "medium",
+        topic: ["Mathematics"],
+        testCases: [
+            { input: "2", expectedOutput: "Yes" },
+            { input: "4", expectedOutput: "No" },
+            { input: "17", expectedOutput: "Yes" },
+            { input: "20", expectedOutput: "No" },
+            { input: "23", expectedOutput: "Yes" }
+        ]
     },
     {
         id: "5",
@@ -49,156 +85,110 @@ export const problems: CodingProblemType[] = [
         outputFormat: "The Nth Fibonacci number.",
         exampleInput: "6",
         exampleOutput: "8",
-        constraints: "1 ≤ N ≤ 30"
+        constraints: "1 ≤ N ≤ 30",
+        difficuly: "medium",
+        topic: ["Mathematics"],
+        testCases: [
+            { input: "1", expectedOutput: "1" },
+            { input: "2", expectedOutput: "1" },
+            { input: "3", expectedOutput: "2" },
+            { input: "4", expectedOutput: "3" },
+            { input: "5", expectedOutput: "5" }
+        ]
     },
     {
         id: "6",
-        title: "Greatest Common Divisor",
-        description: "Find the GCD of two numbers.",
-        inputFormat: "Two integers A and B.",
-        outputFormat: "The greatest common divisor of A and B.",
-        exampleInput: "10 15",
-        exampleOutput: "5",
-        constraints: "1 ≤ A, B ≤ 10^5"
+        title: "Palindrome Check",
+        description: "Check if a string is a palindrome.",
+        inputFormat: "A single string S.",
+        outputFormat: "Yes if S is a palindrome, otherwise No.",
+        exampleInput: "madam",
+        exampleOutput: "Yes",
+        constraints: "1 ≤ |S| ≤ 100",
+        difficuly: "easy",
+        topic: ["Strings"],
+        testCases: [
+            { input: "madam", expectedOutput: "Yes" },
+            { input: "hello", expectedOutput: "No" },
+            { input: "level", expectedOutput: "Yes" },
+            { input: "rotor", expectedOutput: "Yes" },
+            { input: "abcba", expectedOutput: "Yes" }
+        ]
     },
     {
         id: "7",
-        title: "LCM of Two Numbers",
-        description: "Find the least common multiple of two numbers.",
-        inputFormat: "Two integers A and B.",
-        outputFormat: "The least common multiple of A and B.",
-        exampleInput: "4 6",
-        exampleOutput: "12",
-        constraints: "1 ≤ A, B ≤ 10^5"
+        title: "Find Maximum Element",
+        description: "Find the maximum element in an array.",
+        inputFormat: "An array of integers A.",
+        outputFormat: "The maximum element in A.",
+        exampleInput: "1 5 3 9 2",
+        exampleOutput: "9",
+        constraints: "1 ≤ |A| ≤ 100",
+        difficuly: "easy",
+        topic: ["Arrays"],
+        testCases: [
+            { input: "1 5 3 9 2", expectedOutput: "9" },
+            { input: "10 2 5 1", expectedOutput: "10" },
+            { input: "1 1 1 1", expectedOutput: "1" },
+            { input: "5", expectedOutput: "5" },
+            { input: "-1 -5 -2", expectedOutput: "-1" }
+        ]
     },
     {
         id: "8",
-        title: "Armstrong Number",
-        description: "Check if a number is an Armstrong number.",
-        inputFormat: "A single integer N.",
-        outputFormat: "Yes if N is an Armstrong number, otherwise No.",
-        exampleInput: "153",
-        exampleOutput: "Yes",
-        constraints: "1 ≤ N ≤ 100000"
-    },
-    {
-        id: "9",
-        title: "Palindrome Number",
-        description: "Check if a number is a palindrome.",
-        inputFormat: "A single integer N.",
-        outputFormat: "Yes if N is a palindrome, otherwise No.",
-        exampleInput: "121",
-        exampleOutput: "Yes",
-        constraints: "1 ≤ N ≤ 10^6"
-    },
-    {
-        id: "10",
-        title: "Binary to Decimal",
-        description: "Convert a binary number to decimal.",
-        inputFormat: "A binary number as a string.",
-        outputFormat: "The decimal representation of the binary number.",
-        exampleInput: "1010",
-        exampleOutput: "10",
-        constraints: "1 ≤ length of binary string ≤ 32"
-    },
-    {
-        id: "11",
-        title: "Decimal to Binary",
-        description: "Convert a decimal number to binary.",
-        inputFormat: "A single integer N.",
-        outputFormat: "The binary representation of N.",
-        exampleInput: "10",
-        exampleOutput: "1010",
-        constraints: "1 ≤ N ≤ 1000"
-    },
-    {
-        id: "12",
-        title: "Count Vowels",
-        description: "Count the number of vowels in a string.",
-        inputFormat: "A single string S.",
-        outputFormat: "The count of vowels in S.",
-        exampleInput: "hello",
-        exampleOutput: "2",
-        constraints: "1 ≤ length of S ≤ 100"
-    },
-    {
-        id: "13",
         title: "String Reverse",
         description: "Reverse a given string.",
         inputFormat: "A single string S.",
         outputFormat: "The reversed string.",
         exampleInput: "hello",
         exampleOutput: "olleh",
-        constraints: "1 ≤ length of S ≤ 100"
+        constraints: "1 ≤ |S| ≤ 100",
+        difficuly: "easy",
+        topic: ["Strings"],
+        testCases: [
+            { input: "hello", expectedOutput: "olleh" },
+            { input: "world", expectedOutput: "dlrow" },
+            { input: "abc", expectedOutput: "cba" },
+            { input: "a", expectedOutput: "a" },
+            { input: "", expectedOutput: "" }
+        ]
     },
     {
-        id: "14",
-        title: "Second Largest Number",
-        description: "Find the second largest number in an array.",
-        inputFormat: "An array of N integers.",
-        outputFormat: "The second largest number.",
-        exampleInput: "10 20 4 45 99",
-        exampleOutput: "45",
-        constraints: "2 ≤ N ≤ 1000"
-    },
-    {
-        id: "15",
-        title: "Sum of Array",
-        description: "Find the sum of elements in an array.",
-        inputFormat: "An array of N integers.",
-        outputFormat: "The sum of elements in the array.",
-        exampleInput: "1 2 3 4 5",
-        exampleOutput: "15",
-        constraints: "1 ≤ N ≤ 1000"
-    },
-    {
-        id: "16",
-        title: "Find Missing Number",
-        description: "Find the missing number in a sequence from 1 to N.",
-        inputFormat: "An array of N-1 distinct integers from 1 to N.",
-        outputFormat: "The missing number.",
-        exampleInput: "1 2 4 5",
-        exampleOutput: "3",
-        constraints: "2 ≤ N ≤ 1000"
-    },
-    {
-        id: "17",
-        title: "Check Anagram",
-        description: "Check if two strings are anagrams.",
-        inputFormat: "Two strings S1 and S2.",
-        outputFormat: "Yes if they are anagrams, otherwise No.",
-        exampleInput: "listen silent",
-        exampleOutput: "Yes",
-        constraints: "1 ≤ length of S1, S2 ≤ 100"
-    },
-    {
-        id: "18",
-        title: "Count Words",
-        description: "Count the number of words in a given sentence.",
-        inputFormat: "A string representing a sentence.",
-        outputFormat: "The word count.",
-        exampleInput: "Hello world!",
+        id: "9",
+        title: "Count Vowels",
+        description: "Count the number of vowels in a string.",
+        inputFormat: "A single string S.",
+        outputFormat: "The number of vowels in S.",
+        exampleInput: "hello",
         exampleOutput: "2",
-        constraints: "1 ≤ length of sentence ≤ 1000"
+        constraints: "1 ≤ |S| ≤ 100",
+        difficuly: "easy",
+        topic: ["Strings"],
+        testCases: [
+            { input: "hello", expectedOutput: "2" },
+            { input: "aeiou", expectedOutput: "5" },
+            { input: "xyz", expectedOutput: "0" },
+            { input: "programming", expectedOutput: "3" },
+            { input: "", expectedOutput: "0" }
+        ]
     },
     {
-        id: "19",
-        title: "Matrix Transpose",
-        description: "Find the transpose of a given matrix.",
-        inputFormat: "A N×M matrix.",
-        outputFormat: "The transposed matrix.",
-        exampleInput: "[[1, 2], [3, 4]]",
-        exampleOutput: "[[1, 3], [2, 4]]",
-        constraints: "1 ≤ N, M ≤ 10"
-    },
-    {
-        id: "20",
-        title: "Sum of Digits Until One Digit",
-        description: "Repeatedly sum the digits of a number until a single digit is obtained.",
-        inputFormat: "A single integer N.",
-        outputFormat: "The single digit sum.",
-        exampleInput: "9875",
+        id: "10",
+        title: "Binary Search",
+        description: "Perform binary search on a sorted array.",
+        inputFormat: "A sorted array A and a target value T.",
+        outputFormat: "The index of T in A, or -1 if not found.",
+        exampleInput: "1 3 5 7 9, 5",
         exampleOutput: "2",
-        constraints: "1 ≤ N ≤ 10^9"
+        constraints: "1 ≤ |A| ≤ 100, A is sorted",
+        difficuly: "hard",
+        topic: ["Algorithms", "Arrays"],
+        testCases: [
+            { "input": "1 3 5 7 9, 5", "expectedOutput": "2" },
+            { "input": "2 4 6 8 10, 6", "expectedOutput": "2" },
+            { "input": "1 2 3 4 5 6 7 8 9 10, 10", "expectedOutput": "9" },
+            { "input": "10 20 30 40 50, 25", "expectedOutput": "-1" },
+            { "input": "5, 5", "expectedOutput": "0" }
+        ]
     }
-];
+]

@@ -1,22 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 
 const images = [
-    "https://img.freepik.com/free-photo/mythical-dragon-beast-anime-style_23-2151112835.jpg?w=1800",
-    "https://img.freepik.com/free-photo/men-women-embrace-sunset-generative-ai_188544-12581.jpg?w=1800",
-    "https://img.freepik.com/free-photo/anime-moon-landscape_23-2151645914.jpg?w=1800",
-    "https://img.freepik.com/free-photo/anime-style-portrait-traditional-japanese-samurai-character_23-2151499086.jpg?w=1800",
-    "https://img.freepik.com/free-photo/japan-background-digital-art_23-2151546166.jpg?w=1380",
+    "https://images.unsplash.com/photo-1536148935331-408321065b18?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1463171379579-3fdfb86d6285?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://plus.unsplash.com/premium_photo-1720287601920-ee8c503af775?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
-
+const words = ['Compile.', 'Debug.', 'Run.'];
 const Hero = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    // Auto-slide every 4 seconds
+    const [index, setIndex] = useState(0);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % words.length);
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -25,7 +29,7 @@ const Hero = () => {
     }, []);
 
     return (
-        <div className="relative w-full h-[70vh]  overflow-hidden">
+        <div className="relative w-full h-[85vh] bg-black overflow-hidden">
             {/* Image Slider with Smooth Transitions */}
             <AnimatePresence mode="wait">
                 <motion.img
@@ -48,35 +52,20 @@ const Hero = () => {
                 className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-center text-white"
             >
                 <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
+                    className="text-5xl font-bold"
+                    initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.8 }}
-                    className="text-5xl font-bold drop-shadow-lg"
+                    transition={{ duration: 0.8 }}
                 >
-                    Welcome to Our Store
+                    Code. <span className="text-blue-400">{words[index]}</span>
                 </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-xl mt-2"
-                >
-                    Discover amazing website templates
-                </motion.p>
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.7, duration: 0.6 }}
-                >
-                    <Button
-                        className="px-8 py-3 mt-4 border-white bg-transparent text-white hover:bg-white hover:text-black transition-all"
-                        variant="outline"
-                        asChild
-                    >
-                        <Link href="/snippets">Explore Snippets</Link>
-                    </Button>
-                </motion.div>
+                <p className="text-lg mt-4 text-gray-300">Run, debug, and collaborate on your code in real time.</p>
+                <div className="mt-6 flex gap-4">
+                    <Button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg">Start Coding</Button>
+                    <Button className="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg">Explore Templates</Button>
+                </div>
             </motion.div>
+
 
             {/* Dot Indicators with Animation */}
             <motion.div
@@ -97,7 +86,7 @@ const Hero = () => {
                     />
                 ))}
             </motion.div>
-        </div>
+        </div >
     );
 };
 

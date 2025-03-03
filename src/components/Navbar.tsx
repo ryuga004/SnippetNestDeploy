@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -12,13 +12,23 @@ const Navbar = () => {
     const [openModal, setOpenModal] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const pathname = usePathname();
+    const [scrolled, setScrolled] = useState<boolean>(false);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 16);
+            // console.log("SCROLLED Y", window.scrollY);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll); // Cleanup
+    }, []);
     return (
         <>
             {/* Navbar */}
-            <nav className="bg-gray-900 shadow-md fixed w-full top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50">
+            <nav className={`${scrolled ? "bg-transparent" : "bg-gray-900 shadow-md "}  fixed w-full top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50`}>
                 {/* Logo */}
-                <Link href="/" className="text-xl font-bold text-white">SnippetNest</Link>
+                <Link href="/" className={`${scrolled ? "text-red-800" : "text-white"} text-xl font-bold `}>SnippetNest</Link>
 
                 {/* Desktop Links */}
                 <div className="hidden md:flex gap-6">
@@ -33,25 +43,29 @@ const Navbar = () => {
                 <button className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
                     {menuOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
-            </nav>
+            </nav >
 
             {/* Mobile Menu */}
-            {menuOpen && (
-                <div className="z-20 absolute top-16 left-0 w-full bg-gray-900 p-4 flex flex-col items-center gap-4 md:hidden">
-                    <NavLink href="/" pathname={pathname} onClick={() => setMenuOpen(false)}>Home</NavLink>
-                    <NavLink href="/snippets" pathname={pathname} onClick={() => setMenuOpen(false)}>Snippets</NavLink>
-                    <NavLink href="/problems" pathname={pathname} onClick={() => setMenuOpen(false)}>Practice</NavLink>
-                    <NavLink href="/generate" pathname={pathname} onClick={() => setMenuOpen(false)}>AI Generator</NavLink>
-                    <Button onClick={() => { setOpenModal(true); setMenuOpen(false); }}>Create Snippet</Button>
-                </div>
-            )}
+            {
+                menuOpen && (
+                    <div className="z-20 absolute top-16 left-0 w-full bg-gray-900 p-4 flex flex-col items-center gap-4 md:hidden">
+                        <NavLink href="/" pathname={pathname} onClick={() => setMenuOpen(false)}>Home</NavLink>
+                        <NavLink href="/snippets" pathname={pathname} onClick={() => setMenuOpen(false)}>Snippets</NavLink>
+                        <NavLink href="/problems" pathname={pathname} onClick={() => setMenuOpen(false)}>Practice</NavLink>
+                        <NavLink href="/generate" pathname={pathname} onClick={() => setMenuOpen(false)}>AI Generator</NavLink>
+                        <Button onClick={() => { setOpenModal(true); setMenuOpen(false); }}>Create Snippet</Button>
+                    </div>
+                )
+            }
 
             {/* Modal */}
-            {openModal && (
-                <ModalWrapper handleClose={() => setOpenModal(false)} heading="Create Snippet">
-                    <CreateSnippetForm handleClose={() => setOpenModal(false)} />
-                </ModalWrapper>
-            )}
+            {
+                openModal && (
+                    <ModalWrapper handleClose={() => setOpenModal(false)} heading="Create Snippet">
+                        <CreateSnippetForm handleClose={() => setOpenModal(false)} />
+                    </ModalWrapper>
+                )
+            }
         </>
     );
 };

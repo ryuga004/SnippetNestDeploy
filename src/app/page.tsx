@@ -2,6 +2,7 @@
 import FeaturedSnippets from '@/components/featuredSnippet';
 import Hero from '@/components/Hero';
 import { Button } from '@/components/ui/button';
+import MovementWrapper from '@/hoc/Animation/movementWrapper';
 import SectionWrapper from '@/hoc/sectionWrapper';
 import { snippets } from '@/lib/data';
 import { useAppDispatch } from '@/redux/redux-hooks';
@@ -19,29 +20,30 @@ const Home = () => {
       <SectionWrapper>
         <Hero />
       </SectionWrapper>
-
-      {/* Featured Snippets Section */}
       <SectionWrapper>
         <FeaturedSnippets />
+
       </SectionWrapper>
 
       <SectionWrapper>
 
         <div className="py-20 bg-white">
           <div className="container px-4 mx-auto">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-6">Not finding what you need?</h2>
-              <p className="text-xl text-muted-foreground mb-8">
-                Let our AI create a custom snippet tailored to your specific requirements.
-                Just describe what you need and we will generate it for you.
-              </p>
-              <Link href="/generate">
-                <Button size="lg" className="gap-2">
-                  Try AI Generator
-                  <Sparkles className="w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
+            <MovementWrapper delay={.5} direction='none' triggerOnScroll={true}>
+              <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-3xl font-bold mb-6">Not finding what you need?</h2>
+                <p className="text-xl text-muted-foreground mb-8">
+                  Let our AI create a custom snippet tailored to your specific requirements.
+                  Just describe what you need and we will generate it for you.
+                </p>
+                <Link href="/generate">
+                  <Button size="lg" className="gap-2">
+                    Try AI Generator
+                    <Sparkles className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+            </MovementWrapper>
           </div>
         </div>
       </SectionWrapper>

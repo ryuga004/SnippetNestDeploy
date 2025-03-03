@@ -1,0 +1,80 @@
+#root {
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.7);
+}
+
+/* Badge variants */
+.badge-success {
+    background-color: hsl(142, 76%, 36%, 0.1);
+    color: hsl(142, 76%, 36%);
+    border-color: hsl(142, 76%, 36%, 0.2);
+}
+
+.badge-warning {
+    background-color: hsl(38, 92%, 50%, 0.1);
+    color: hsl(38, 92%, 50%);
+    border-color: hsl(38, 92%, 50%, 0.2);
+}
+
+.badge-destructive {
+    background-color: hsl(0, 84%, 60%, 0.1);
+    color: hsl(0, 84%, 60%);
+    border-color: hsl(0, 84%, 60%, 0.2);
+}
+
+/* Handle styles */
+.handle-horizontal {
+    width: 4px !important;
+    background-color: hsl(var(--border)) !important;
+}
+
+.handle-vertical {
+    height: 4px !important;
+    background-color: hsl(var(--border)) !important;
+}
+
+/* Syntax highlighting (simplified) */
+.token.comment {
+    color: #6a9955;
+}
+
+.token.string {
+    color: #ce9178;
+}
+
+.token.number {
+    color: #b5cea8;
+}
+
+.token.keyword {
+    color: #569cd6;
+}
+
+.token.operator {
+    color: #d4d4d4;
+}
+
+.token.function {
+    color: #dcdcaa;
+}

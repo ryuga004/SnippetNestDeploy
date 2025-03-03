@@ -27,6 +27,12 @@ export interface GeneratedCodeType {
     source_code: string,
 }
 
+interface TestCaseType {
+    input: string,
+    expectedOutput: string,
+    actualOutput?: string,
+}
+
 export interface CodingProblemType {
     id: string,
     title: string,
@@ -36,4 +42,8 @@ export interface CodingProblemType {
     exampleInput: string,
     exampleOutput: string,
     constraints: string,
+    difficuly: "easy" | "medium" | "hard",
+    topic: string[],
+    testCases: TestCaseType[]
 }
+
