@@ -29,7 +29,7 @@ const Home = () => {
 
         <div className="py-20 bg-white">
           <div className="container px-4 mx-auto">
-            <MovementWrapper delay={.5} direction='none' triggerOnScroll={true}>
+            <MovementWrapper direction='none' triggerOnScroll={true}>
               <div className="max-w-3xl mx-auto text-center">
                 <h2 className="text-3xl font-bold mb-6">Not finding what you need?</h2>
                 <p className="text-xl text-muted-foreground mb-8">

@@ -25,7 +25,7 @@ const FeaturedSnippets = () => {
                         </Link>
                     </aside>
                 </header>
-                <MovementWrapper direction='up' triggerOnScroll={true} delay={.8}>
+                <MovementWrapper direction='up' triggerOnScroll={true} >
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {featuredSnippets?.map((snippet: Snippet) => (
                             <SnippetCard key={snippet.id} snippet={snippet} />
