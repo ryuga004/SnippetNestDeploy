@@ -10,7 +10,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "5",
         exampleOutput: "120",
         constraints: "1 ≤ N ≤ 10",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Mathematics"],
         testCases: [
             { input: "1", expectedOutput: "1" },
@@ -29,7 +29,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "1234",
         exampleOutput: "10",
         constraints: "1 ≤ N ≤ 10000",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Mathematics"],
         testCases: [
             { input: "1234", expectedOutput: "10" },
@@ -48,7 +48,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "1234",
         exampleOutput: "4321",
         constraints: "1 ≤ N ≤ 100000",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Mathematics"],
         testCases: [
             { input: "1234", expectedOutput: "4321" },
@@ -67,7 +67,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "7",
         exampleOutput: "Yes",
         constraints: "1 ≤ N ≤ 10^6",
-        difficuly: "medium",
+        difficulty: "medium",
         topic: ["Mathematics"],
         testCases: [
             { input: "2", expectedOutput: "Yes" },
@@ -86,7 +86,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "6",
         exampleOutput: "8",
         constraints: "1 ≤ N ≤ 30",
-        difficuly: "medium",
+        difficulty: "medium",
         topic: ["Mathematics"],
         testCases: [
             { input: "1", expectedOutput: "1" },
@@ -105,7 +105,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "madam",
         exampleOutput: "Yes",
         constraints: "1 ≤ |S| ≤ 100",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Strings"],
         testCases: [
             { input: "madam", expectedOutput: "Yes" },
@@ -124,7 +124,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "1 5 3 9 2",
         exampleOutput: "9",
         constraints: "1 ≤ |A| ≤ 100",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Arrays"],
         testCases: [
             { input: "1 5 3 9 2", expectedOutput: "9" },
@@ -143,7 +143,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "hello",
         exampleOutput: "olleh",
         constraints: "1 ≤ |S| ≤ 100",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Strings"],
         testCases: [
             { input: "hello", expectedOutput: "olleh" },
@@ -162,7 +162,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "hello",
         exampleOutput: "2",
         constraints: "1 ≤ |S| ≤ 100",
-        difficuly: "easy",
+        difficulty: "easy",
         topic: ["Strings"],
         testCases: [
             { input: "hello", expectedOutput: "2" },
@@ -181,7 +181,7 @@ export const problems: CodingProblemType[] = [
         exampleInput: "1 3 5 7 9, 5",
         exampleOutput: "2",
         constraints: "1 ≤ |A| ≤ 100, A is sorted",
-        difficuly: "hard",
+        difficulty: "hard",
         topic: ["Algorithms", "Arrays"],
         testCases: [
             { "input": "1 3 5 7 9, 5", "expectedOutput": "2" },
@@ -190,5 +190,25 @@ export const problems: CodingProblemType[] = [
             { "input": "10 20 30 40 50, 25", "expectedOutput": "-1" },
             { "input": "5, 5", "expectedOutput": "0" }
         ]
+    },
+    {
+        id: "11",
+        title: "Sort an Array",
+        description: "Sort a given array in non-decreasing order.",
+        inputFormat: "An array A of integers.",
+        outputFormat: "The sorted array in non-decreasing order.",
+        exampleInput: "5\n5 3 8 1 2",
+        exampleOutput: "1 2 3 5 8",
+        constraints: "1 ≤ |A| ≤ 100, -10^3 ≤ A[i] ≤ 10^3",
+        difficulty: "easy",
+        topic: ["Algorithms", "Sorting"],
+        testCases: [
+            { "input": "5\n5 3 8 1 2", "expectedOutput": "1 2 3 5 8" },
+            { "input": "5\n10 9 8 7 6", "expectedOutput": "6 7 8 9 10" },
+            { "input": "5\n1 2 3 4 5", "expectedOutput": "1 2 3 4 5" },
+            { "input": "5\n0 -1 5 -3 2", "expectedOutput": "-3 -1 0 2 5" },
+            { "input": "4\n100 50 75 25", "expectedOutput": "25 50 75 100" }
+        ]
     }
+
 ]

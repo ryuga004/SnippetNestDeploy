@@ -42,7 +42,7 @@ export interface CodingProblemType {
     exampleInput: string,
     exampleOutput: string,
     constraints: string,
-    difficuly: "easy" | "medium" | "hard",
+    difficulty: "easy" | "medium" | "hard",
     topic: string[],
     testCases: TestCaseType[]
 }

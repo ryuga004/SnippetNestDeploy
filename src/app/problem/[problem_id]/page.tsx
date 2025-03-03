@@ -30,7 +30,7 @@ interface CodingProblemType {
     exampleInput: string;
     exampleOutput: string;
     constraints: string;
-    difficuly: "easy" | "medium" | "hard";
+    difficulty: "easy" | "medium" | "hard";
     topic: string[];
     testCases: TestCaseType[];
 }
@@ -38,14 +38,14 @@ interface CodingProblemType {
 
 
 const languages = [
-    { id: 54, name: "C++ (GCC 9.2.0)" },
-    { id: 62, name: "Java (OpenJDK 13)" },
-    { id: 71, name: "Python (3.8.1)" }
+    { id: 54, name: "C++" },
+    { id: 62, name: "Java" },
+    { id: 71, name: "Python" }
 ];
 
 // Default code templates for different languages
 const defaultCodeTemplates: Record<number, string> = {
-    54: `#include <iostream>
+    54: `#include <bits/stdc++.h>
 using namespace std;
 
 int main() {
@@ -127,6 +127,7 @@ function ProblemInterFace() {
         try {
             // Only run the first two test cases
             const RunTesCases = testCases.slice(0, 2);
+
 
             const submissions = await Promise.all(
                 RunTesCases.map(async (test) => {
@@ -341,8 +342,8 @@ function ProblemInterFace() {
                         <Badge variant="outline" className="bg-primary/10 hover:bg-primary/20 transition-colors">
                             Problem #{problem.id}
                         </Badge>
-                        <Badge className={`rounded-lg px-3 py-1 text-sm ${difficultyColors[problem.difficuly]}`}>
-                            {problem.difficuly.toUpperCase()}
+                        <Badge className={`rounded-lg px-3 py-1 text-sm ${difficultyColors[problem.difficulty]}`}>
+                            {problem.difficulty.toUpperCase()}
                         </Badge>
                     </div>
                 </header>
@@ -370,8 +371,8 @@ function ProblemInterFace() {
                                     <div>
                                         <h2 className="text-2xl font-bold text-foreground">{problem.title}</h2>
                                         <div className="mt-1 flex items-center gap-2">
-                                            <Badge className={`rounded-lg px-3 py-1 text-sm ${difficultyColors[problem.difficuly]}`}>
-                                                {problem.difficuly.toUpperCase()}
+                                            <Badge className={`rounded-lg px-3 py-1 text-sm ${difficultyColors[problem.difficulty]}`}>
+                                                {problem.difficulty.toUpperCase()}
                                             </Badge>
                                             {problem.topic.map(topic => (
                                                 <Badge key={topic} variant="outline" className="capitalize">

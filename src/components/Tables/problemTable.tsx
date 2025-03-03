@@ -64,7 +64,7 @@ export function ProblemsTable({ problems }: { problems: CodingProblemType[] }) {
             },
         },
         {
-            accessorKey: "difficuly",
+            accessorKey: "difficulty",
             header: ({ column }) => (
                 <Button variant="ghost" className="text-gray-900 hover:bg-gray-200" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
                     Difficulty
@@ -72,7 +72,7 @@ export function ProblemsTable({ problems }: { problems: CodingProblemType[] }) {
                 </Button>
             ),
             cell: ({ row }) => {
-                const difficulty = row.original.difficuly;
+                const difficulty = row.original.difficulty;
                 return (
                     <Badge className={`rounded-lg px-3 py-1 text-sm ${difficultyColors[difficulty]}`}>
                         {difficulty.toUpperCase()}
@@ -80,7 +80,7 @@ export function ProblemsTable({ problems }: { problems: CodingProblemType[] }) {
                 );
             },
             sortingFn: (rowA, rowB) => {
-                return difficultyOrder[rowA.original.difficuly] - difficultyOrder[rowB.original.difficuly];
+                return difficultyOrder[rowA.original.difficulty] - difficultyOrder[rowB.original.difficulty];
             },
         },
     ];
