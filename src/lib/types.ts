@@ -47,3 +47,9 @@ export interface CodingProblemType {
     testCases: TestCaseType[]
 }
 
+export interface User {
+    id: string,
+    username: string,
+    email: string,
+    avatar: string,
+}
