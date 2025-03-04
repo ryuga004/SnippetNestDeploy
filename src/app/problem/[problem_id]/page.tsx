@@ -8,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SectionWrapper from '@/hoc/sectionWrapper';
 import { difficultyColors } from '@/lib';
 import { problems } from '@/lib/codingProblemData';
+import { Submission } from '@/lib/types';
+import { useAppDispatch, useAppSelector } from '@/redux/redux-hooks';
+import { addSubmission } from '@/redux/slice/submissionSlice';
 import { Editor } from '@monaco-editor/react';
 import { AlertCircleIcon, BookOpenIcon, CheckCircleIcon, CodeIcon, PlayIcon, SendIcon, TerminalIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -74,6 +77,8 @@ const RAPIDAPI_KEY = process.env.NEXT_PUBLIC_API_RAPID_JUDGE0_API_KEY!;
 
 function ProblemInterFace() {
 
+    const dispatch = useAppDispatch();
+    const [mysubmission, setMysubmission] = useState<Submission[]>([]);
     const [problem, setProblem] = useState<CodingProblemType>();
     const [language, setLanguage] = useState(languages[0].id);
     const [code, setCode] = useState(defaultCodeTemplates[languages[0].id]);
@@ -97,6 +102,22 @@ function ProblemInterFace() {
             router.push("/");
         }
     }, [problem_id]);
+
+    const { submissions, loading } = useAppSelector(state => state.submissions);
+    const { user, isLoggedIn } = useAppSelector(state => state.user);
+
+    useEffect(() => {
+        if (!loading && isLoggedIn) {
+            const mysub = submissions.filter(item => (item.problem_id === problem_id && item.user_id === user.id));
+            if (mysub) {
+                mysub.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                setMysubmission(mysub);
+            } else {
+                console.log("Error in Setting Submissions");
+            }
+        }
+
+    }, [submissions])
 
     useEffect(() => {
         setCode(defaultCodeTemplates[language] || '');
@@ -323,9 +344,24 @@ function ProblemInterFace() {
             );
             setOutput(allPassed ? successOutput : failureOutput);
 
+            if (isLoggedIn && problem) {
+
+                const submissionNew = {
+                    id: crypto.randomUUID(),
+                    problem_id: problem.id,
+                    user_id: user.id,
+                    language: languages.find(item => item.id === language)?.name || "C++",
+                    submittedCode: code,
+                    createdAt: new Date(Date.now()),
+                    status: allPassed,
+                }
+                dispatch(addSubmission(submissionNew));
+            }
+
             setStatus('success');
         }, 2000);
     };
+
     if (!problem) {
         return <div>No problem found ..</div>
     }
@@ -422,31 +458,30 @@ function ProblemInterFace() {
 
                                 <TabsContent value="submissions" className="flex-1 overflow-auto p-4">
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-semibold">Your Submissions</h3>
+
                                         <div className="space-y-2">
-                                            {[
-                                                { id: 1, status: 'Accepted', runtime: '4ms', memory: '8.2MB', language: 'C++', date: '2 hours ago' },
-                                                { id: 2, status: 'Wrong Answer', runtime: '7ms', memory: '9.1MB', language: 'Python', date: '1 day ago' }
-                                            ].map(submission => (
-                                                <div key={submission.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
-                                                    <div className="flex items-center gap-2">
-                                                        {submission.status === 'Accepted' ? (
-                                                            <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                                                        ) : (
-                                                            <AlertCircleIcon className="h-5 w-5 text-red-500" />
-                                                        )}
-                                                        <span className={submission.status === 'Accepted' ? 'text-green-500' : 'text-red-500'}>
-                                                            {submission.status}
-                                                        </span>
+                                            {
+
+
+                                                mysubmission.map(submission => (
+                                                    <div key={submission.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
+                                                        <div className="flex items-center gap-2">
+                                                            {submission.status ? (
+                                                                <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                                                            ) : (
+                                                                <AlertCircleIcon className="h-5 w-5 text-red-500" />
+                                                            )}
+                                                            <span className={submission.status ? 'text-green-500' : 'text-red-500'}>
+                                                                {submission.status ? "Accepted" : "Wrong Answer"}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                                            <span>{submission.language}</span>
+                                                            <span>{new Date(submission.createdAt).toISOString().split("T")[0]}</span>
+                                                            <button onClick={() => setCode(submission.submittedCode)} >view</button>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                                        <span>{submission.runtime}</span>
-                                                        <span>{submission.memory}</span>
-                                                        <span>{submission.language}</span>
-                                                        <span>{submission.date}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                ))}
                                         </div>
                                     </div>
                                 </TabsContent>

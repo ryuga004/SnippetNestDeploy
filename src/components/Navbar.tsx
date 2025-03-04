@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { removeUser } from "@/redux/slice/userSlice";
 import LoginRegister from "./Forms/login";
+import CenterModalWrapper from "@/hoc/modals/centerModalWrapper";
 
 const Navbar = () => {
     const [openModal, setOpenModal] = useState(false);
@@ -108,9 +109,9 @@ const Navbar = () => {
                 <CreateSnippetForm handleClose={() => setOpenModal(false)} />
             </ModalWrapper>
 
-            <ModalWrapper handleClose={() => setOpenLoginModal(false)} isOpen={openLoginModal}>
-                <LoginRegister />
-            </ModalWrapper>
+            {openLoginModal && <CenterModalWrapper handleClose={() => setOpenLoginModal(false)} >
+                <LoginRegister handleClose={() => setOpenLoginModal(false)} />
+            </CenterModalWrapper>}
         </>
     );
 };

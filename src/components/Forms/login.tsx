@@ -1,119 +1,145 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { UploadRouter } from "@/lib/uploadthing";
+import { useState } from "react";
 import { useAppDispatch } from "@/redux/redux-hooks";
 import { setUser } from "@/redux/slice/userSlice";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UploadDropzone } from "@uploadthing/react";
 import Image from "next/image";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-const formSchema = z.object({
-    email: z.string().email("Invalid email"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    avatar: z.string().optional(),
-});
+interface FormDataType {
+    username?: string;
+    email?: string;
+    password?: string;
+    avatar?: string;
+}
 
-type FormData = z.infer<typeof formSchema>;
-
-export default function LoginRegister() {
+export default function LoginRegister({ handleClose }: { handleClose: () => void }) {
     const [isRegister, setIsRegister] = useState(false);
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [avatarUrl, setAvatarUrl] = useState<string>("/user_logo.png");
     const dispatch = useAppDispatch();
+    const [formData, setFormData] = useState<FormDataType>({});
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        formState: { errors, isSubmitting },
-    } = useForm<FormData>({
-        resolver: zodResolver(formSchema),
-    });
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
-    const onSubmit = async (data: FormData) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
         dispatch(
             setUser({
                 id: crypto.randomUUID(),
-                username: data.username,
-                email: data.email,
-                avatar: avatarUrl || "",
+                username: formData.username || "",
+                email: formData.email || "",
+                avatar: avatarUrl || "/user_logo.png",
             })
         );
         alert(isRegister ? "Registered successfully!" : "Logged in successfully!");
+        handleClose();
     };
 
     return (
-        // <div>
-        //     <aside>
-        //         <img
-        //             src="https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        //             alt="loginImage"
-        //         />
-        //     </aside>
-        //     <main>
+        <div className="flex flex-col md:flex-row bg-gray-100 h-[70vh] w-[70vw]">
 
-        //     </main>
-        // </div>
-        <Card className="">
-            <CardHeader>
-                <CardTitle className="text-2xl">{isRegister ? "Register" : "Login"}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <aside className="hidden  lg:flex  ">
+                <Image
+                    className="w-full h-full object-cover rounded-l-xl"
+                    src="https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?q=80&w=2070&auto=format&fit=crop"
+                    alt="Login Illustration"
+                />
+            </aside>
+
+            {/* Form Container */}
+            <main className="flex flex-col justify-center items-center w-full md:w-1/2 p-8 bg-white shadow-lg rounded-xl">
+                <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                    {isRegister ? "Register" : "Login"}
+                </h2>
+
+                <form className="w-1/2 max-w-sm space-y-4" onSubmit={handleSubmit}>
+                    {/* Avatar Upload & Preview */}
                     {isRegister && (
-                        <>
-                            <Label>Upload Avatar</Label>
-                            <UploadDropzone<UploadRouter, "avatarUpload">
-                                endpoint="avatarUpload"
-                                onClientUploadComplete={(res) => {
-                                    if (res?.[0]?.url) {
-                                        setAvatarUrl(res[0].key);
-                                        setValue("avatar", res[0].key);
-                                    }
-                                }}
-                                onUploadError={(error) => {
-                                    console.error("Upload error:", error);
-                                }}
+                        <div className="flex flex-col items-center">
+                            <label className="mt-2 cursor-pointer text-blue-600 hover:underline">
+
+                                {avatarUrl && (
+                                    <Image
+                                        src={avatarUrl}
+                                        alt="Avatar Preview"
+                                        className="w-20 h-20 rounded-full border-2 border-gray-300 shadow-md"
+                                    />
+                                )}
+                                <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                            </label>
+                        </div>
+                    )}
+
+                    {/* Username Field */}
+                    {isRegister && (
+                        <div>
+                            <label className="block text-gray-600 font-medium">Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                                placeholder="Enter your username"
+                                onChange={handleChange}
                             />
-                            {avatarUrl && <Image src={avatarUrl} alt="Avatar" width={80} height={80} className="rounded-full" />}
-                        </>
+                        </div>
                     )}
 
-                    {isRegister && (
-                        <>
-                            <Label>Username</Label>
-                            <Input {...register("username")} placeholder="Enter your username" />
-                            {errors.username && <p className="text-red-500 h-[50vh]">{errors.username.message}</p>}
-                        </>
-                    )}
+                    {/* Email Field */}
+                    <div>
+                        <label className="block text-gray-600 font-medium">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                            placeholder="Enter your email"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <Label>Email</Label>
-                    <Input {...register("email")} type="email" placeholder="Enter your email" />
-                    {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                    {/* Password Field */}
+                    <div>
+                        <label className="block text-gray-600 font-medium">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                            placeholder="Enter your password"
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                    <Label>Password</Label>
-                    <Input {...register("password")} type="password" placeholder="Enter your password" />
-                    {errors.password && <p className="text-red-500">{errors.password.message}</p>}
-
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
-                        {isSubmitting ? "Processing..." : isRegister ? "Register" : "Login"}
-                    </Button>
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-all"
+                    >
+                        {isRegister ? "Register" : "Login"}
+                    </button>
                 </form>
 
-                <p className="mt-4 text-sm text-center">
+                {/* Switch between Login/Register */}
+                <p className="mt-4 text-gray-600">
                     {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
-                    <Button variant="link" onClick={() => setIsRegister(!isRegister)}>
-                        {isRegister ? "Login" : "Register"}
-                    </Button>
+                    <button
+                        className="text-blue-600 hover:underline"
+                        onClick={() => setIsRegister(!isRegister)}
+                    >
+                        {isRegister ? "Login here" : "Register here"}
+                    </button>
                 </p>
-            </CardContent>
-        </Card>
+            </main>
+        </div>
     );
 }

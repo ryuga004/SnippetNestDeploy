@@ -1,13 +1,19 @@
 "use client";
 import { ProblemsTable } from "@/components/Tables/problemTable";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { problems } from "@/lib/codingProblemData";
+import { useAppSelector } from "@/redux/redux-hooks";
 
 export default function ProblemsPage() {
 
+    const { problems, loading, error } = useAppSelector(state => state.problems);
 
-    if (!problems) {
+
+    if (loading) {
         return <div className="text-center text-lg font-semibold">Loading...</div>;
+    }
+    if (error) {
+        console.log("Error in Loading Problems ", error);
+        return <div>Something Went Wrong ! </div>
     }
 
     return (

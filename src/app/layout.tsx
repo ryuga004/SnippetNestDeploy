@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SnippetNest",
-  description: "SnippetNest is a website to get and share code snippets",
+  description: "SnippetNest is a online coding website to run , compile and share code snippets",
 };
 
 export default function RootLayout({

@@ -1,3 +1,4 @@
+import { snippets } from '@/lib/data';
 import { Snippet } from '@/lib/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -19,8 +20,8 @@ const snippetSlice = createSlice({
     name: 'snippet',
     initialState,
     reducers: {
-        setSnippets: (state, action: PayloadAction<Snippet[]>) => {
-            state.snippets = action.payload;
+        setSnippets: (state) => {
+            state.snippets = snippets;
         },
         addSnippet: (state, action: PayloadAction<Snippet>) => {
             state.snippets.push(action.payload);

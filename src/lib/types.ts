@@ -53,3 +53,14 @@ export interface User {
     email: string,
     avatar: string,
 }
+
+
+export interface Submission {
+    id: string,
+    problem_id: string,
+    user_id: string,
+    createdAt: Date,
+    language: string,
+    status: boolean,
+    submittedCode: string
+}

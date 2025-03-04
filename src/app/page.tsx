@@ -4,17 +4,20 @@ import Hero from '@/components/Hero';
 import { Button } from '@/components/ui/button';
 import MovementWrapper from '@/hoc/Animation/movementWrapper';
 import SectionWrapper from '@/hoc/sectionWrapper';
-import { snippets } from '@/lib/data';
 import { useAppDispatch } from '@/redux/redux-hooks';
+import { setproblems } from '@/redux/slice/problemSlice';
 import { setSnippets } from '@/redux/slice/snippetSlice';
 import { Sparkles, Star } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 const Home = () => {
 
   const dispatch = useAppDispatch();
-  dispatch(setSnippets(snippets));
-
+  useEffect(() => {
+    dispatch(setSnippets());
+    dispatch(setproblems());
+  }, [dispatch])
   return (
     <div>
       <SectionWrapper>
