@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { mockUser } from "@/lib/data";
+import { showToast } from "@/lib";
 import { GeneratedCodeType, Snippet } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { addSnippet } from "@/redux/slice/snippetSlice";
@@ -20,6 +20,7 @@ export default function AIGeneratorPage() {
     const [generatedCode, setGeneratedCode] = useState<GeneratedCodeType | null>(null);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const [progress, setProgress] = useState<number>(0);
+    const { user, isLoggedIn } = useAppSelector(state => state.user);
     const interval = setInterval(() => {
         setProgress((prev) => {
             if (prev >= 100) {
@@ -30,6 +31,10 @@ export default function AIGeneratorPage() {
         });
     }, 300);
     const handleGenerate = async () => {
+        if (!isLoggedIn) {
+            showToast("To Use This Feature You Must Login First", "info");
+            return;
+        }
         setIsGenerating(true);
         // setGeneratedCode("");
         setProgress(0);
@@ -101,7 +106,7 @@ export default function AIGeneratorPage() {
         navigator.clipboard.writeText(generatedCode.source_code);
         toast.success("Code copied to clipboard!");
     };
-    const currentUser = mockUser;
+
     const dispatch = useAppDispatch();
     const snippets = useAppSelector(state => state.snippets.snippets)
     const handleMakeSnippetSubmit = () => {
@@ -117,9 +122,9 @@ export default function AIGeneratorPage() {
             source_code: generatedCode?.source_code,
             tags: ["AI Generated"],
             author: {
-                author_id: currentUser.id,
-                username: currentUser.username,
-                avatar: currentUser.avatar,
+                author_id: user.id,
+                username: user.username,
+                avatar: user.avatar,
             }
         }
         if (snippetNew) {

@@ -1,5 +1,6 @@
 "use client";
 
+import EditSnippet from "@/components/Forms/editSnippet";
 import SnippetCard from "@/components/template_card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,10 +22,19 @@ import SectionWrapper from "@/hoc/sectionWrapper";
 import useSnippetFilters from "@/hooks/useSnippetFilter";
 import { Snippet } from "@/lib/types";
 import { useAppSelector } from "@/redux/redux-hooks";
-import { Search, SlidersHorizontal, RefreshCcw } from "lucide-react";
+import { RefreshCcw, Search, SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+
+export interface openEditModalProps {
+    open: boolean,
+    snippet?: Snippet,
+}
 
 export default function SnippetsPage() {
     const languages = ["JavaScript", "TypeScript", "Python", "C++", "Java"];
+    const [openEditModal, setOpenEditModal] = useState<openEditModalProps>({
+        open: false
+    });
 
     // Retrieve snippets from Redux store
     const snippetsData = useAppSelector((state) => state.snippets);
@@ -191,7 +201,7 @@ export default function SnippetsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 bg-white p-6 rounded-lg">
                         {filteredSnippets.length > 0 ? (
                             filteredSnippets.map((snippet: Snippet) => (
-                                <SnippetCard key={snippet.id} snippet={snippet} />
+                                <SnippetCard key={snippet.id} setOpenEditModal={setOpenEditModal} snippet={snippet} />
                             ))
                         ) : (
                             <p className="text-center col-span-full text-gray-500">
@@ -201,6 +211,10 @@ export default function SnippetsPage() {
                     </div>
                 </div>
             </main>
+            {openEditModal.open && <EditSnippet snippet={openEditModal.snippet!} handleClose={() => setOpenEditModal({
+                open: false,
+                snippet: undefined
+            })} />}
         </SectionWrapper>
     );
 }

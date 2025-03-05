@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { Button } from "./ui/button";
-import { Menu, X } from "lucide-react";
-import ModalWrapper from "@/hoc/modalWrapper";
-import CreateSnippetForm from "./Forms/createSnippet";
-import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { removeUser } from "@/redux/slice/userSlice";
-import LoginRegister from "./Forms/login";
 import CenterModalWrapper from "@/hoc/modals/centerModalWrapper";
+import ModalWrapper from "@/hoc/modalWrapper";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { removeUser } from "@/redux/slice/userSlice";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import CreateSnippetForm from "./Forms/createSnippet";
+import LoginRegister from "./Forms/login";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 const Navbar = () => {
     const [openModal, setOpenModal] = useState(false);
@@ -63,26 +63,26 @@ const Navbar = () => {
                     <NavLink href="/problems" pathname={pathname}>Practice</NavLink>
                     <NavLink href="/generate" pathname={pathname}>AI Generator</NavLink>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                    <Popover>
+                        <PopoverTrigger asChild>
                             <Avatar className={`${scrolled ? "bg-red-400" : "bg-white"} cursor-pointer`}>
                                 <AvatarImage src={isLoggedIn ? user.avatar : "/user_logo.png"} alt="User Avatar" />
                                 <AvatarFallback>{user.username?.charAt(0) || "U"}</AvatarFallback>
                             </Avatar>
-                        </DropdownMenuTrigger>
+                        </PopoverTrigger>
 
-                        <DropdownMenuContent align="end">
+                        <PopoverContent align="end" className="w-48 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
                             {isLoggedIn ? (
                                 <>
-                                    <DropdownMenuItem disabled className="font-semibold">{user.username}</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setOpenModal(true)}>Create Snippet</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={handleLogout} className="text-red-500">Logout</DropdownMenuItem>
+                                    <p className="font-semibold px-4 py-2">{user.username}</p>
+                                    <button onClick={() => setOpenModal(true)} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">Create Snippet</button>
+                                    <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md">Logout</button>
                                 </>
                             ) : (
-                                <DropdownMenuItem onClick={() => setOpenLoginModal(true)}>Login</DropdownMenuItem>
+                                <button onClick={() => setOpenLoginModal(true)} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">Login</button>
                             )}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
                 {/* Mobile Menu Button */}

@@ -6,9 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { mockUser } from "@/lib/data";
 import { Snippet } from "@/lib/types";
-import { useAppDispatch } from "@/redux/redux-hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { addSnippet } from "@/redux/slice/snippetSlice";
 import { X } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +18,7 @@ const languages = ["JavaScript", "TypeScript", "Python", "C++", "Java"];
 
 export default function CreateSnippetForm({ handleClose }: { handleClose: () => void }) {
 
-    const currentUser = mockUser;
+    const { user } = useAppSelector(state => state.user);
     const {
         register,
         handleSubmit,
@@ -32,9 +31,9 @@ export default function CreateSnippetForm({ handleClose }: { handleClose: () => 
             language: languages[0],
             tags: [],
             author: {
-                author_id: currentUser.id,
-                username: currentUser.username,
-                avatar: currentUser.avatar
+                author_id: user.id,
+                username: user.username,
+                avatar: user.avatar
             }
         },
     });
