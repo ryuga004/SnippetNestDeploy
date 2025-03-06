@@ -90,7 +90,7 @@ function ProblemInterFace() {
     const [testCases, setTestCases] = useState<TestCaseType[]>([]);
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle');
     const [activeTab, setActiveTab] = useState('description');
-    const { problem_id } = useParams();
+    const { problem_id } = useParams() as { problem_id: string };
 
     const router = useRouter();
     useEffect(() => {

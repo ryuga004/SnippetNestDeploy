@@ -4,7 +4,7 @@ import CenterModalWrapper from "@/hoc/modals/centerModalWrapper";
 import ModalWrapper from "@/hoc/modalWrapper";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeUser } from "@/redux/slice/userSlice";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRoundCog, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -19,7 +19,7 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState<boolean>(false);
-    const { isLoggedIn, user } = useAppSelector(state => state.user);
+    const { isLoggedIn, isAdmin, user } = useAppSelector(state => state.user);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const dispatch = useAppDispatch();
     const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -55,7 +55,7 @@ const Navbar = () => {
                 <Link href="/" className={`${scrolled ? "text-red-800" : "text-white"} text-xl font-bold`}>
                     SnippetNest
                 </Link>
-
+                {!isAdmin && <Link href="/admin" ><UserRoundCog size={30} color="white" className="bg-blue-500 rounded-lg h-full w-full p-3" /></Link>}
                 {/* Desktop Links */}
                 <div className="hidden md:flex gap-6">
                     <NavLink href="/" pathname={pathname}>Home</NavLink>

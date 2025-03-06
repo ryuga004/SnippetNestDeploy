@@ -8,6 +8,7 @@ interface UserState {
     loading: boolean;
     error: string | null;
     isLoggedIn: boolean,
+    isAdmin: boolean,
 }
 const initialState: UserState = {
     user: {
@@ -19,6 +20,7 @@ const initialState: UserState = {
     loading: false,
     error: null,
     isLoggedIn: false,
+    isAdmin: false,
 };
 
 
@@ -30,6 +32,7 @@ const userSlice = createSlice({
         setUser: (state, action: PayloadAction<User>) => {
             state.user = action.payload;
             state.isLoggedIn = state.user.id !== "";
+            state.isAdmin = state.user.id !== "";
         },
         removeUser: (state) => {
             state.user = initialState.user;

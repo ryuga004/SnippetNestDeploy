@@ -48,7 +48,7 @@ export default function SnippetCard({ snippet, setOpenEditModal }: SnippetCardPr
                 <CardHeader className="p-4 flex flex-col">
                     <div className="flex justify-between">
                         <h3 className="font-semibold text-xl text-white">{snippet.title}</h3>
-                        {!owner &&
+                        {owner &&
 
                             <Popover>
                                 <PopoverTrigger className="focus:outline-none">

@@ -55,6 +55,8 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
                     className="w-full h-full object-cover rounded-l-xl"
                     src="https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?q=80&w=2070&auto=format&fit=crop"
                     alt="Login Illustration"
+                    width={300}
+                    height={500}
                 />
             </aside>
 
@@ -75,6 +77,8 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
                                         src={avatarUrl}
                                         alt="Avatar Preview"
                                         className="w-20 h-20 rounded-full border-2 border-gray-300 shadow-md"
+                                        width={200}
+                                        height={200}
                                     />
                                 )}
                                 <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
