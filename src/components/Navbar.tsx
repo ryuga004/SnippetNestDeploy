@@ -62,6 +62,11 @@ const Navbar = () => {
                     <NavLink href="/snippets" pathname={pathname}>Snippets</NavLink>
                     <NavLink href="/problems" pathname={pathname}>Practice</NavLink>
                     <NavLink href="/generate" pathname={pathname}>AI Generator</NavLink>
+                    <NavLink href="/admin" pathname={pathname}>Dashboard</NavLink>
+                    <NavLink href="/admin/snippets" pathname={pathname}>Snippets</NavLink>
+                    <NavLink href="/admin/problems" pathname={pathname}>Problems</NavLink>
+                    <NavLink href="/admin/users" pathname={pathname}>Users</NavLink>
+
 
                     <Popover>
                         <PopoverTrigger asChild>

@@ -11,22 +11,42 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { difficultyColors } from "@/lib";
-import { problems } from "@/lib/codingProblemData";
-import { Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { Pencil, PlusCircle, Trash2, Users } from "lucide-react";
 import Link from "next/link";
 
-export default function ProblemsPage() {
+// Mock user data
+const users = [
+    { id: "1", name: "John Doe", email: "john@example.com", role: "Admin", status: "Active" },
+    { id: "2", name: "Jane Smith", email: "jane@example.com", role: "User", status: "Inactive" },
+    { id: "3", name: "Alice Brown", email: "alice@example.com", role: "User", status: "Active" },
+    { id: "4", name: "Bob Johnson", email: "bob@example.com", role: "Moderator", status: "Active" },
+];
 
+// interface roleColorsType {
+//     Admin: string,
+//     User: string,
+//     Moderator: string,
+// }
+
+// const roleColors: roleColorsType = {
+//     Admin: "bg-red-500 text-white",
+//     User: "bg-blue-500 text-white",
+//     Moderator: "bg-green-500 text-white",
+// };
+
+export default function UsersPage() {
     return (
         <SectionWrapper>
             <div className="container mx-auto py-8">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Coding Problems</h1>
-                    <Link href="/admin/problems/new">
+                    <h1 className="text-3xl font-bold flex items-center gap-2">
+                        <Users className="h-6 w-6" />
+                        User Management
+                    </h1>
+                    <Link href="/admin/users/new">
                         <Button>
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            Add New Problem
+                            Add New User
                         </Button>
                     </Link>
                 </div>
@@ -35,38 +55,28 @@ export default function ProblemsPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Difficulty</TableHead>
-                                <TableHead>Topics</TableHead>
-                                <TableHead>Test Cases</TableHead>
+                                <TableHead>Username</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Role</TableHead>
+
+
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {problems.map((problem) => (
-                                <TableRow key={problem.id}>
-                                    <TableCell className="font-medium">{problem.title}</TableCell>
+                            {users.map((user) => (
+                                <TableRow key={user.id}>
+                                    <TableCell className="font-medium">{user.name}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
                                     <TableCell>
-                                        <Badge
-                                            variant="secondary"
-                                            className={difficultyColors[problem.difficulty]}
-                                        >
-                                            {problem.difficulty}
+                                        <Badge className={"bg-gray-500 text-white"}>
+                                            {user.role}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>
-                                        <div className="flex gap-1 flex-wrap">
-                                            {problem.topic.map((topic) => (
-                                                <Badge key={topic} variant="outline">
-                                                    {topic}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{problem.testCases.length} cases</TableCell>
+
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
-                                            <Link href={`/admin/problems/edit/${problem.id}`}>
+                                            <Link href={`/admin/users/edit/${user.id}`}>
                                                 <Button variant="outline" size="sm">
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>

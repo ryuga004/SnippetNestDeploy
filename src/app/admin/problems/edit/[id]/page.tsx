@@ -20,10 +20,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import SectionWrapper from "@/hoc/sectionWrapper";
+import { CodingProblemType } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle, X } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -42,8 +46,9 @@ const formSchema = z.object({
         })
     ),
 });
+export default function EditProblemPage() {
 
-export default function NewProblemPage() {
+    const { id: problem_id } = useParams();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -59,12 +64,6 @@ export default function NewProblemPage() {
             testCases: [{ input: "", expectedOutput: "" }],
         },
     });
-
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log(values);
-        // Implement your creation logic here
-    };
-
     const addTestCase = () => {
         const currentTestCases = form.getValues("testCases");
         form.setValue("testCases", [
@@ -80,13 +79,46 @@ export default function NewProblemPage() {
             currentTestCases.filter((_, i) => i !== index)
         );
     };
+    useEffect(() => {
+        // Mock API call - replace with actual API
+        const fetchProblem = async () => {
+            // Simulate API call
+            const problem: CodingProblemType = {
+                id: problem_id as string,
+                title: "Two Sum",
+                description: "Find two numbers that add up to target",
+                inputFormat: "Array of integers and target sum",
+                outputFormat: "Indices of the two numbers",
+                exampleInput: "[2,7,11,15], target = 9",
+                exampleOutput: "[0,1]",
+                constraints: "2 <= nums.length <= 104",
+                difficulty: "easy",
+                topic: ["Arrays", "Hash Table"],
+                testCases: [
+                    {
+                        input: "[2,7,11,15], 9",
+                        expectedOutput: "[0,1]",
+                    },
+                ],
+            };
+
+            form.reset(problem);
+        };
+
+        fetchProblem();
+    }, [problem_id, form]);
+
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        console.log(values);
+        // Implement your update logic here
+    };
 
     return (
         <SectionWrapper>
             <div className="container mx-auto py-8">
-                <h1 className="text-3xl font-bold mb-8">Create New Problem</h1>
+                <h1 className="text-3xl font-bold mb-8">Edit Problem</h1>
 
-                <Card className="p-6">
+                <div className="bg-white rounded-lg shadow p-6">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <FormField
@@ -96,7 +128,7 @@ export default function NewProblemPage() {
                                     <FormItem>
                                         <FormLabel>Title</FormLabel>
                                         <FormControl>
-                                            <Input {...field} placeholder="Enter problem title" />
+                                            <Input {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -110,11 +142,7 @@ export default function NewProblemPage() {
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
-                                            <Textarea
-                                                {...field}
-                                                placeholder="Enter problem description"
-                                                className="min-h-[100px]"
-                                            />
+                                            <Textarea {...field} className="min-h-[100px]" />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -129,7 +157,7 @@ export default function NewProblemPage() {
                                         <FormItem>
                                             <FormLabel>Input Format</FormLabel>
                                             <FormControl>
-                                                <Textarea {...field} placeholder="Describe input format" />
+                                                <Textarea {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -143,7 +171,7 @@ export default function NewProblemPage() {
                                         <FormItem>
                                             <FormLabel>Output Format</FormLabel>
                                             <FormControl>
-                                                <Textarea {...field} placeholder="Describe output format" />
+                                                <Textarea {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -159,7 +187,7 @@ export default function NewProblemPage() {
                                         <FormItem>
                                             <FormLabel>Example Input</FormLabel>
                                             <FormControl>
-                                                <Textarea {...field} placeholder="Provide example input" />
+                                                <Textarea {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -173,10 +201,7 @@ export default function NewProblemPage() {
                                         <FormItem>
                                             <FormLabel>Example Output</FormLabel>
                                             <FormControl>
-                                                <Textarea
-                                                    {...field}
-                                                    placeholder="Provide example output"
-                                                />
+                                                <Textarea {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -191,10 +216,7 @@ export default function NewProblemPage() {
                                     <FormItem>
                                         <FormLabel>Constraints</FormLabel>
                                         <FormControl>
-                                            <Textarea
-                                                {...field}
-                                                placeholder="Enter problem constraints"
-                                            />
+                                            <Textarea {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -226,7 +248,6 @@ export default function NewProblemPage() {
                                     </FormItem>
                                 )}
                             />
-
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-lg font-semibold">Test Cases</h3>
@@ -297,12 +318,15 @@ export default function NewProblemPage() {
                                 <Button variant="outline" type="button">
                                     Cancel
                                 </Button>
-                                <Button type="submit">Create Problem</Button>
+                                <Button type="submit">Save Changes</Button>
                             </div>
                         </form>
                     </Form>
-                </Card>
+                </div>
             </div>
         </SectionWrapper>
     );
 }
+
+
+

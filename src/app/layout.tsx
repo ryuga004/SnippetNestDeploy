@@ -37,7 +37,7 @@ export default function RootLayout({
       >
         <StoreProvider>
           <>
-            <Navbar />
+            {<Navbar />}
 
             <div className="py-16 bg-gray-200">
               <Toaster richColors position="top-center" />
