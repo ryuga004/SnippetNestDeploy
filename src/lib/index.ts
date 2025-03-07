@@ -1,3 +1,5 @@
+import { Home, FileText, Code, List, LayoutDashboard, Users } from "lucide-react";
+
 import { toast } from "sonner";
 
 export const difficultyColors = {
@@ -17,3 +19,31 @@ export const showToast = (message: string, type: "success" | "error" | "warning"
         closeButton: true,
     });
 };
+
+
+export const Icons = [
+    {
+        name: "Home",
+        icon: Home,
+    },
+    {
+        name: "Snippets",
+        icon: FileText,
+    },
+    {
+        name: "Practice",
+        icon: Code,
+    },
+    {
+        name: "Problems",
+        icon: List,
+    },
+    {
+        name: "Dashboard",
+        icon: LayoutDashboard,
+    },
+    {
+        name: "Users",
+        icon: Users,
+    },
+];

@@ -4,9 +4,9 @@ import CenterModalWrapper from "@/hoc/modals/centerModalWrapper";
 import ModalWrapper from "@/hoc/modalWrapper";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeUser } from "@/redux/slice/userSlice";
-import { Menu, UserRoundCog, X } from "lucide-react";
+import { Code, FileText, Home, LayoutDashboard, List, Menu, Sparkles, UserCog, Users, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import CreateSnippetForm from "./Forms/createSnippet";
 import LoginRegister from "./Forms/login";
@@ -29,7 +29,7 @@ const Navbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-
+    const router = useRouter();
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -46,26 +46,75 @@ const Navbar = () => {
         dispatch(removeUser());
         setMenuOpen(false);
     };
-
+    const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
     return (
         <>
             {/* Navbar */}
             <nav className={`${scrolled ? "bg-transparent" : "bg-gray-900 shadow-md"} fixed w-full  px-8 py-4 top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50`}>
                 {/* Logo */}
-                <Link href="/" className={`${scrolled ? "text-red-800" : "text-white"} text-xl font-bold`}>
-                    SnippetNest
+                <Link
+                    href="/"
+                    className={`${scrolled ? "text-red-800" : "text-white"
+                        } text-xl flex items-center gap-3 font-bold`}
+                >
+                    <Avatar className="cursor-pointer">
+                        <AvatarImage src="/logo.png" alt="Logo" />
+                        <AvatarFallback>S</AvatarFallback>
+                    </Avatar>
+                    <span>SnippetNest</span>
                 </Link>
-                {!isAdmin && <Link href="/admin" ><UserRoundCog size={30} color="white" className="bg-blue-500 rounded-lg h-full w-full p-3" /></Link>}
+                {isAdmin && (
+                    <Button
+                        onClick={() => {
+                            setShowAdminPanel(!showAdminPanel);
+                            router.push(!showAdminPanel ? "/admin" : "/");
+                        }}
+                        asChild
+                        className="flex items-center bg-red-800 justify-center p-2 rounded-lg transition-all duration-300 hover:bg-red-900 cursor-pointer"
+                    >
+                        < UserCog size={70} className="text-white bg-blue-500 rounded-md " />
+                    </Button>
+                )}
                 {/* Desktop Links */}
                 <div className="hidden md:flex gap-6">
-                    <NavLink href="/" pathname={pathname}>Home</NavLink>
-                    <NavLink href="/snippets" pathname={pathname}>Snippets</NavLink>
-                    <NavLink href="/problems" pathname={pathname}>Practice</NavLink>
-                    <NavLink href="/generate" pathname={pathname}>AI Generator</NavLink>
-                    <NavLink href="/admin" pathname={pathname}>Dashboard</NavLink>
-                    <NavLink href="/admin/snippets" pathname={pathname}>Snippets</NavLink>
-                    <NavLink href="/admin/problems" pathname={pathname}>Problems</NavLink>
-                    <NavLink href="/admin/users" pathname={pathname}>Users</NavLink>
+
+                    {
+                        showAdminPanel ? <>
+                            <NavLink href="/admin" pathname={pathname}>
+                                <LayoutDashboard className="w-5 h-5 mr-2" />
+                                Dashboard
+                            </NavLink>
+                            <NavLink href="/admin/snippets" pathname={pathname}>
+                                <FileText className="w-5 h-5 mr-2" />
+                                Snippets
+                            </NavLink>
+                            <NavLink href="/admin/problems" pathname={pathname}>
+                                <List className="w-5 h-5 mr-2" />
+                                Problems
+                            </NavLink>
+                            <NavLink href="/admin/users" pathname={pathname}>
+                                <Users className="w-5 h-5 mr-2" />
+                                Users
+                            </NavLink>
+                        </> : <>
+                            <NavLink href="/" pathname={pathname}>
+                                <Home className="w-5 h-5 mr-2" />
+                                Home
+                            </NavLink>
+                            <NavLink href="/snippets" pathname={pathname}>
+                                <FileText className="w-5 h-5 mr-2" />
+                                Snippets
+                            </NavLink>
+                            <NavLink href="/problems" pathname={pathname}>
+                                <Code className="w-5 h-5 mr-2" />
+                                Practice
+                            </NavLink>
+                            <NavLink href="/generate" pathname={pathname}>
+                                <Sparkles className="w-5 h-5 mr-2" />
+                                AI Generator
+                            </NavLink>
+                        </>
+                    }
 
 
                     <Popover>
@@ -127,7 +176,7 @@ const NavLink = ({ href, pathname, children, onClick }: { href: string; pathname
         <Link
             href={href}
             onClick={onClick}
-            className={`px-4 py-2 rounded-lg ${isActive ? "bg-blue-500 text-white" : "text-gray-300 hover:text-white"}`}
+            className={`px-4 py-2 rounded-lg flex gap-2 ${isActive ? "bg-blue-500 text-white" : "text-gray-300 hover:text-white"}`}
         >
             {children}
         </Link>

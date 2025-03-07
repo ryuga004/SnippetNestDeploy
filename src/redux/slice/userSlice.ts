@@ -20,7 +20,7 @@ const initialState: UserState = {
     loading: false,
     error: null,
     isLoggedIn: false,
-    isAdmin: false,
+    isAdmin: true,
 };
 
 

@@ -8,11 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SectionWrapper from '@/hoc/sectionWrapper';
 import { difficultyColors, showToast } from '@/lib';
 import { problems } from '@/lib/codingProblemData';
-import { Submission } from '@/lib/types';
+import { solutions } from '@/lib/solutionsData';
+import { Solution, Submission } from '@/lib/types';
 import { useAppDispatch, useAppSelector } from '@/redux/redux-hooks';
 import { addSubmission } from '@/redux/slice/submissionSlice';
 import { Editor } from '@monaco-editor/react';
-import { AlertCircleIcon, BookOpenIcon, CheckCircleIcon, CodeIcon, PlayIcon, SendIcon, TerminalIcon } from 'lucide-react';
+import { AlertCircleIcon, BookOpenIcon, CheckCircleIcon, ChevronDown, ChevronUp, CodeIcon, Copy, Loader2, PlayIcon, SendIcon, TerminalIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { JSX, useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
@@ -91,8 +92,18 @@ function ProblemInterFace() {
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle');
     const [activeTab, setActiveTab] = useState('description');
     const { problem_id } = useParams() as { problem_id: string };
-
+    const [solution, setSolution] = useState<Solution>();
+    const [generating, setGenerating] = useState<boolean>(false);
     const router = useRouter();
+    const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
+
+    const toggleCollapse = (language: string) => {
+        setExpanded((prev) => ({ ...prev, [language]: !prev[language] }));
+    };
+
+    const copyToClipboard = (code: string) => {
+        navigator.clipboard.writeText(code);
+    };
     useEffect(() => {
         const foundProblem = problems.find(problem => problem.id === problem_id);
 
@@ -375,6 +386,18 @@ function ProblemInterFace() {
     if (!problem) {
         return <div>No problem found ..</div>
     }
+
+    const handleGetSolution = () => {
+        setGenerating(true);
+        const findSolution = solutions.find(item => item.problem_id === problem_id);
+        if (findSolution) {
+            setSolution(findSolution);
+        } else {
+            // generate a ai call which 
+            console.log("solution no found");
+        }
+        setGenerating(false);
+    }
     return (
         <SectionWrapper>
             <Toaster richColors position="top-center" />
@@ -402,7 +425,7 @@ function ProblemInterFace() {
                         <ResizablePanel defaultSize={30} minSize={20} maxSize={50} className="bg-card">
                             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
                                 <div className="px-4 pt-4 border-b">
-                                    <TabsList className="w-full grid grid-cols-2">
+                                    <TabsList className="w-full grid grid-cols-3">
                                         <TabsTrigger value="description" className="flex items-center gap-1">
                                             <BookOpenIcon className="h-4 w-4" />
                                             <span>Description</span>
@@ -410,6 +433,10 @@ function ProblemInterFace() {
                                         <TabsTrigger value="submissions" className="flex items-center gap-1">
                                             <CheckCircleIcon className="h-4 w-4" />
                                             <span>Submissions</span>
+                                        </TabsTrigger>
+                                        <TabsTrigger value="solution" className="flex items-center gap-1">
+                                            <CheckCircleIcon className="h-4 w-4" />
+                                            <span>Solution</span>
                                         </TabsTrigger>
                                     </TabsList>
                                 </div>
@@ -469,7 +496,7 @@ function ProblemInterFace() {
 
                                 <TabsContent value="submissions" className="flex-1 overflow-auto p-4">
                                     <div className="space-y-4">
-
+                                        {(!mysubmission || mysubmission.length === 0) && <p className='text-center'>There are no submissions </p>}
                                         <div className="space-y-2">
                                             {
 
@@ -494,6 +521,57 @@ function ProblemInterFace() {
                                                     </div>
                                                 ))}
                                         </div>
+                                    </div>
+                                </TabsContent>
+                                <TabsContent value="solution" className="flex-1 overflow-scroll  p-4">
+                                    <div className="space-y-4 flex justify-center flex-col">
+                                        {isLoggedIn ?
+                                            <>
+                                                <button onClick={handleGetSolution} className='w-full p-3 bg-orange-300 rounded-lg hover:bg-orange-500' >
+                                                    {generating ? <Loader2 className="animate-spin w-5 h-5 mr-2" /> : "Get Answer"}
+                                                </button>
+                                                {!solution && <p className='text-center text-gray-500 text-sm'>**you will not get the points for this problem if you see solution**</p>}
+                                                {solution && (
+                                                    <div className="p-4 border rounded-lg bg-gray-100 dark:bg-gray-800">
+                                                        <div>
+                                                            {solution.explanation}
+                                                        </div>
+                                                        <div className='flex flex-col gap-2 overflow-scroll h-[50vh]'>
+                                                            {solution.answer.map((item) => (
+                                                                <div key={item.language} className="border rounded-lg overflow-scroll">
+                                                                    <button
+                                                                        onClick={() => toggleCollapse(item.language)}
+                                                                        className="w-full flex items-center justify-between px-4 py-2 bg-gray-200 dark:bg-gray-700 text-lg font-semibold"
+                                                                    >
+                                                                        {item.language}
+                                                                        {expanded[item.language] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                                                    </button>
+
+                                                                    {expanded[item.language] && (
+                                                                        <div className="p-3 bg-white dark:bg-gray-900 border-t">
+                                                                            <div className="flex justify-between items-center mb-2">
+                                                                                <span className="text-gray-700 dark:text-gray-300">Code Snippet:</span>
+                                                                                <Button
+                                                                                    onClick={() => copyToClipboard(item.code)}
+                                                                                    variant="outline"
+                                                                                    size="sm"
+                                                                                    className="text-sm"
+                                                                                >
+                                                                                    <Copy size={16} className="mr-1" /> Copy
+                                                                                </Button>
+                                                                            </div>
+
+                                                                            <pre className="bg-gray-900 text-white p-3 rounded-lg text-sm overflow-auto">
+                                                                                <code>{item.code}</code>
+                                                                            </pre>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </> : (<div className='text-center'>There is no answer</div>)}
                                     </div>
                                 </TabsContent>
                             </Tabs>
@@ -613,7 +691,7 @@ function ProblemInterFace() {
                     </ResizablePanelGroup>
                 </div>
             </div>
-        </SectionWrapper>
+        </SectionWrapper >
     );
 }
 

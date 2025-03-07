@@ -8,7 +8,6 @@ import {
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,38 +19,36 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { CodingProblemType } from "@/lib/types";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { showToast } from "@/lib";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { updateProblem } from "@/redux/slice/problemSlice";
 import { PlusCircle, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { useFieldArray, useForm } from "react-hook-form";
 
+interface ProblemForm {
+    id: string;
+    title: string;
+    description: string;
+    inputFormat: string;
+    outputFormat: string;
+    exampleInput: string;
+    exampleOutput: string;
+    constraints: string;
+    difficulty: "easy" | "medium" | "hard";
+    topic: string[];
+    testCases: { input: string; expectedOutput: string }[];
+}
 
-const formSchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    description: z.string().min(1, "Description is required"),
-    inputFormat: z.string().min(1, "Input format is required"),
-    outputFormat: z.string().min(1, "Output format is required"),
-    exampleInput: z.string().min(1, "Example input is required"),
-    exampleOutput: z.string().min(1, "Example output is required"),
-    constraints: z.string().min(1, "Constraints are required"),
-    difficulty: z.enum(["easy", "medium", "hard"]),
-    topic: z.array(z.string()).min(1, "At least one topic is required"),
-    testCases: z.array(
-        z.object({
-            input: z.string(),
-            expectedOutput: z.string(),
-        })
-    ),
-});
 export default function EditProblemPage() {
-
+    const dispatch = useAppDispatch();
     const { id: problem_id } = useParams();
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const { problems } = useAppSelector(state => state.problems);
+
+    const form = useForm<ProblemForm>({
         defaultValues: {
+            id: "",
             title: "",
             description: "",
             inputFormat: "",
@@ -64,53 +61,26 @@ export default function EditProblemPage() {
             testCases: [{ input: "", expectedOutput: "" }],
         },
     });
-    const addTestCase = () => {
-        const currentTestCases = form.getValues("testCases");
-        form.setValue("testCases", [
-            ...currentTestCases,
-            { input: "", expectedOutput: "" },
-        ]);
-    };
 
-    const removeTestCase = (index: number) => {
-        const currentTestCases = form.getValues("testCases");
-        form.setValue(
-            "testCases",
-            currentTestCases.filter((_, i) => i !== index)
-        );
-    };
+    const { fields, append, remove, replace } = useFieldArray({
+        control: form.control,
+        name: "testCases",
+    });
+
     useEffect(() => {
-        // Mock API call - replace with actual API
-        const fetchProblem = async () => {
-            // Simulate API call
-            const problem: CodingProblemType = {
-                id: problem_id as string,
-                title: "Two Sum",
-                description: "Find two numbers that add up to target",
-                inputFormat: "Array of integers and target sum",
-                outputFormat: "Indices of the two numbers",
-                exampleInput: "[2,7,11,15], target = 9",
-                exampleOutput: "[0,1]",
-                constraints: "2 <= nums.length <= 104",
-                difficulty: "easy",
-                topic: ["Arrays", "Hash Table"],
-                testCases: [
-                    {
-                        input: "[2,7,11,15], 9",
-                        expectedOutput: "[0,1]",
-                    },
-                ],
-            };
+        const findProblem = problems.find(item => item.id === problem_id);
+        if (findProblem) {
+            form.reset(findProblem);
+            replace(findProblem.testCases || [{ input: "", expectedOutput: "" }]);
+        } else {
+            console.log("There is no such problem");
+        }
+    }, [problem_id, problems, form, replace]);
 
-            form.reset(problem);
-        };
-
-        fetchProblem();
-    }, [problem_id, form]);
-
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = async (values: ProblemForm) => {
         console.log(values);
-        // Implement your update logic here
+        dispatch(updateProblem(values));
+        showToast("Problem Updated successfully", "success");
     };
 
     return (
@@ -118,7 +88,7 @@ export default function EditProblemPage() {
             <div className="container mx-auto py-8">
                 <h1 className="text-3xl font-bold mb-8">Edit Problem</h1>
 
-                <div className="bg-white rounded-lg shadow p-6">
+                <Card className="p-6">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <FormField
@@ -128,9 +98,8 @@ export default function EditProblemPage() {
                                     <FormItem>
                                         <FormLabel>Title</FormLabel>
                                         <FormControl>
-                                            <Input {...field} />
+                                            <Input {...field} placeholder="Enter problem title" required />
                                         </FormControl>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -142,9 +111,8 @@ export default function EditProblemPage() {
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
-                                            <Textarea {...field} className="min-h-[100px]" />
+                                            <Textarea {...field} placeholder="Enter problem description" required />
                                         </FormControl>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -157,9 +125,8 @@ export default function EditProblemPage() {
                                         <FormItem>
                                             <FormLabel>Input Format</FormLabel>
                                             <FormControl>
-                                                <Textarea {...field} />
+                                                <Textarea {...field} placeholder="Describe input format" required />
                                             </FormControl>
-                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
@@ -171,57 +138,12 @@ export default function EditProblemPage() {
                                         <FormItem>
                                             <FormLabel>Output Format</FormLabel>
                                             <FormControl>
-                                                <Textarea {...field} />
+                                                <Textarea {...field} placeholder="Describe output format" required />
                                             </FormControl>
-                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name="exampleInput"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Example Input</FormLabel>
-                                            <FormControl>
-                                                <Textarea {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="exampleOutput"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Example Output</FormLabel>
-                                            <FormControl>
-                                                <Textarea {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <FormField
-                                control={form.control}
-                                name="constraints"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Constraints</FormLabel>
-                                        <FormControl>
-                                            <Textarea {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
 
                             <FormField
                                 control={form.control}
@@ -229,10 +151,7 @@ export default function EditProblemPage() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Difficulty</FormLabel>
-                                        <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
-                                        >
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select difficulty" />
@@ -244,17 +163,17 @@ export default function EditProblemPage() {
                                                 <SelectItem value="hard">Hard</SelectItem>
                                             </SelectContent>
                                         </Select>
-                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-lg font-semibold">Test Cases</h3>
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={addTestCase}
+                                        onClick={() => append({ input: "", expectedOutput: "" })}
                                         className="flex items-center gap-2"
                                     >
                                         <PlusCircle className="h-4 w-4" />
@@ -262,8 +181,8 @@ export default function EditProblemPage() {
                                     </Button>
                                 </div>
 
-                                {form.watch("testCases").map((_, index) => (
-                                    <Card key={index} className="p-4">
+                                {fields.map((field, index) => (
+                                    <Card key={field.id} className="p-4">
                                         <div className="flex justify-between items-start mb-4">
                                             <h4 className="text-sm font-medium">Test Case {index + 1}</h4>
                                             {index > 0 && (
@@ -271,7 +190,7 @@ export default function EditProblemPage() {
                                                     type="button"
                                                     variant="ghost"
                                                     size="sm"
-                                                    onClick={() => removeTestCase(index)}
+                                                    onClick={() => remove(index)}
                                                 >
                                                     <X className="h-4 w-4" />
                                                 </Button>
@@ -288,7 +207,6 @@ export default function EditProblemPage() {
                                                         <FormControl>
                                                             <Textarea {...field} placeholder="Test case input" />
                                                         </FormControl>
-                                                        <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
@@ -300,12 +218,8 @@ export default function EditProblemPage() {
                                                     <FormItem>
                                                         <FormLabel>Expected Output</FormLabel>
                                                         <FormControl>
-                                                            <Textarea
-                                                                {...field}
-                                                                placeholder="Expected output"
-                                                            />
+                                                            <Textarea {...field} placeholder="Expected output" />
                                                         </FormControl>
-                                                        <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
@@ -322,11 +236,8 @@ export default function EditProblemPage() {
                             </div>
                         </form>
                     </Form>
-                </div>
+                </Card>
             </div>
         </SectionWrapper>
     );
 }
-
-
-

@@ -11,12 +11,23 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { difficultyColors } from "@/lib";
-import { problems } from "@/lib/codingProblemData";
+import { difficultyColors, showToast } from "@/lib";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { removeProblem } from "@/redux/slice/problemSlice";
 import { Pencil, PlusCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 export default function ProblemsPage() {
+    const { problems } = useAppSelector(state => state.problems);
+    const dispatch = useAppDispatch();
+    const handleDelete = (id: string) => {
+        if (!id) {
+            console.log("there is no such problem :>");
+            return;
+        }
+        dispatch(removeProblem(id));
+        showToast("Problem Deleted Successfully", "success");
+    }
 
     return (
         <SectionWrapper>
@@ -71,7 +82,7 @@ export default function ProblemsPage() {
                                                     <Pencil className="h-4 w-4" />
                                                 </Button>
                                             </Link>
-                                            <Button variant="destructive" size="sm">
+                                            <Button onClick={() => { handleDelete(problem.id) }} variant="destructive" size="sm">
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>

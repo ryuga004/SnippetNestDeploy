@@ -64,3 +64,13 @@ export interface Submission {
     status: boolean,
     submittedCode: string
 }
+
+export interface Solution {
+    id: string;
+    problem_id: string;
+    explanation: string;
+    answer: {
+        language: string;
+        code: string;
+    }[];
+}

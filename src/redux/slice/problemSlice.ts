@@ -11,7 +11,7 @@ interface problemstate {
 }
 
 const initialState: problemstate = {
-    problems: [],
+    problems: problems,
     loading: false,
     error: null,
 };
@@ -21,8 +21,8 @@ const problemSlice = createSlice({
     name: 'problem',
     initialState,
     reducers: {
-        setproblems: (state) => {
-            state.problems = problems;
+        setproblems: (state, action: PayloadAction<CodingProblemType[]>) => {
+            state.problems = action.payload;
         },
         addProblem: (state, action: PayloadAction<CodingProblemType>) => {
             state.problems.push(action.payload);

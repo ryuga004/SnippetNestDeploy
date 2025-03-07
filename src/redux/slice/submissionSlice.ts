@@ -21,9 +21,9 @@ const submissionSlice = createSlice({
     name: 'submission',
     initialState,
     reducers: {
-        setSubmissions: (state) => {
+        setSubmissions: (state, action: PayloadAction<Submission[]>) => {
             // loades my submissions for particular problem or total depend on need 
-            state.submissions = [];
+            state.submissions = action.payload;
         },
         addSubmission: (state, action: PayloadAction<Submission>) => {
             state.submissions.push(action.payload);

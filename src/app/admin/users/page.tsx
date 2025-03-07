@@ -37,7 +37,7 @@ const users = [
 export default function UsersPage() {
     return (
         <SectionWrapper>
-            <div className="container mx-auto py-8">
+            <div className="container mx-6 py-8">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold flex items-center gap-2">
                         <Users className="h-6 w-6" />

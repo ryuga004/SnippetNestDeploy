@@ -10,7 +10,7 @@ interface SnippetState {
 }
 
 const initialState: SnippetState = {
-    snippets: [],
+    snippets: snippets,
     loading: false,
     error: null,
 };
@@ -20,8 +20,8 @@ const snippetSlice = createSlice({
     name: 'snippet',
     initialState,
     reducers: {
-        setSnippets: (state) => {
-            state.snippets = snippets;
+        setSnippets: (state, action: PayloadAction<Snippet[]>) => {
+            state.snippets = action.payload;
         },
         addSnippet: (state, action: PayloadAction<Snippet>) => {
             state.snippets.push(action.payload);
