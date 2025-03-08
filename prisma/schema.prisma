@@ -9,10 +9,12 @@ datasource db {
 
 model User {
   id           String        @id @default(cuid())
-  avatar       String
+  avatar       String?
   coverImage   String?
+  password     String
   points       Int           @default(0)
   bio          String?
+  role         Role          @default(USER)
   username     String        @unique
   email        String        @unique
   social       Social?       @relation(fields: [socialId], references: [id])
@@ -22,6 +24,11 @@ model User {
   achievements Achievement[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Social {
