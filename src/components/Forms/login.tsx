@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useAppDispatch } from "@/redux/redux-hooks";
 import { setUser } from "@/redux/slice/userSlice";
 import Image from "next/image";
+import { gql, useMutation } from "@apollo/client";
+import { showToast } from "@/lib";
+import { REGISTER_USER } from "@/lib/services";
 
 interface FormDataType {
     username?: string;
@@ -11,6 +14,7 @@ interface FormDataType {
     password?: string;
     avatar?: string;
 }
+
 
 export default function LoginRegister({ handleClose }: { handleClose: () => void }) {
     const [isRegister, setIsRegister] = useState(false);
@@ -32,18 +36,40 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+    const [registerUser] = useMutation(REGISTER_USER);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(
-            setUser({
-                id: crypto.randomUUID(),
-                username: formData.username || "",
-                email: formData.email || "",
-                avatar: avatarUrl || "/user_logo.png",
-            })
-        );
-        alert(isRegister ? "Registered successfully!" : "Logged in successfully!");
+        if (isRegister) {
+            try {
+                const response = await registerUser({
+                    variables: {
+                        username: formData.username!,
+                        email: formData.email!,
+                        password: formData.password!,
+                    },
+                });
+
+                if (response.data.registerUser.success) {
+                    showToast("Registration successful!", "success");
+                    const user = response.data.registerUser.user;
+                    dispatch(
+                        setUser({
+                            id: user.id,
+                            username: user.username,
+                            email: user.email,
+                            avatar: user?.avatar || "/user_logo.png",
+                        })
+                    );
+                } else {
+                    alert(response.data.registerUser.message);
+                }
+            } catch (err) {
+                console.error("Registration Error:", err);
+            }
+        } else {
+
+        }
         handleClose();
     };
 
