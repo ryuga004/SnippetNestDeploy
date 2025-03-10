@@ -79,12 +79,12 @@ export default function AIGeneratorPage() {
             }
 
             const data = JSON.parse(jsonMatch[0]);
-            if (data?.title && data?.description && data?.language && data?.source_code) {
+            if (data?.title && data?.description && data?.language && data?.sourceCode) {
                 setGeneratedCode({
                     title: data.title,
                     description: data.description,
                     language: data.language.toLowerCase(),
-                    source_code: extractCodeBlock(data.source_code),
+                    sourceCode: extractCodeBlock(data.sourceCode),
                 });
             } else {
                 console.error("Invalid response format");
@@ -103,7 +103,7 @@ export default function AIGeneratorPage() {
 
     const copyToClipboard = () => {
         if (!generatedCode) return;
-        navigator.clipboard.writeText(generatedCode.source_code);
+        navigator.clipboard.writeText(generatedCode.sourceCode);
         toast.success("Code copied to clipboard!");
     };
 
@@ -119,22 +119,22 @@ export default function AIGeneratorPage() {
             title: generatedCode?.title,
             description: generatedCode?.description,
             language: generatedCode?.language,
-            source_code: generatedCode?.source_code,
+            sourceCode: generatedCode?.sourceCode,
             tags: ["AI Generated"],
             author: {
-                author_id: user.id,
+                id: user.id,
                 username: user.username,
                 avatar: user.avatar,
             }
         }
         if (snippetNew) {
-            if (snippets.some(snippet => snippet.source_code === snippetNew.source_code)) {
+            if (snippets.some(snippet => snippet.sourceCode === snippetNew.sourceCode)) {
                 alert("SNIPPET ALREADY EXISTS");
             } else
                 dispatch(addSnippet(snippetNew));
         }
         // if(snippets.filter)
-        //     const isDuplicate = snippets.some(snippet => snippet.source_code === snippetNew.source_code);
+        //     const isDuplicate = snippets.some(snippet => snippet.sourceCode === snippetNew.sourceCode);
 
         // if (isDuplicate) {
         //     console.log("This snippet already exists!");
@@ -257,7 +257,7 @@ export default function AIGeneratorPage() {
                                     </motion.button>
                                 </div>
                             </div>
-                            {generatedCode.language === 'react' ? <CodePreview code={generatedCode?.source_code} /> : <CodeEditor sourceCode={generatedCode?.source_code} />}
+                            {generatedCode.language === 'react' ? <CodePreview code={generatedCode?.sourceCode} /> : <CodeEditor sourceCode={generatedCode?.sourceCode} />}
                         </Card>
                     </div>
 

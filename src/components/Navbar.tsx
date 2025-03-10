@@ -1,9 +1,11 @@
 "use client";
 
 import CenterModalWrapper from "@/hoc/modals/centerModalWrapper";
-import ModalWrapper from "@/hoc/modalWrapper";
+import { showToast } from "@/lib";
+import { LOGOUT_USER } from "@/lib/services";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeUser } from "@/redux/slice/userSlice";
+import { useMutation } from "@apollo/client";
 import { Code, FileText, Home, LayoutDashboard, List, Menu, Sparkles, UserCog, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -42,9 +44,21 @@ const Navbar = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [menuOpen]);
 
-    const handleLogout = () => {
-        dispatch(removeUser());
-        setMenuOpen(false);
+    const [logoutUser] = useMutation(LOGOUT_USER);
+    const handleLogout = async () => {
+        try {
+            const res = await logoutUser();
+            if (res.data.logoutUser.success) {
+                dispatch(removeUser());
+                setMenuOpen(false);
+                showToast(res.data.logoutUser.message, "success");
+            }
+            else {
+                console.log("Logout Failed");
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
     const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
     return (
@@ -159,9 +173,9 @@ const Navbar = () => {
 
             {/* Modal */}
 
-            <ModalWrapper handleClose={() => setOpenModal(false)} heading="Create Snippet" isOpen={openModal}>
+            {openModal && <CenterModalWrapper handleClose={() => setOpenModal(false)} >
                 <CreateSnippetForm handleClose={() => setOpenModal(false)} />
-            </ModalWrapper>
+            </CenterModalWrapper>}
 
             {openLoginModal && <CenterModalWrapper handleClose={() => setOpenLoginModal(false)} >
                 <LoginRegister handleClose={() => setOpenLoginModal(false)} />

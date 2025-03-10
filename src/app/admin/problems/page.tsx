@@ -12,23 +12,48 @@ import {
 } from "@/components/ui/table";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { difficultyColors, showToast } from "@/lib";
+import { DELETE_PROBLEM, GET_ALL_PROGLEM } from "@/lib/services";
+import { CodingProblemType } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
-import { removeProblem } from "@/redux/slice/problemSlice";
+import { removeProblem, setproblems } from "@/redux/slice/problemSlice";
+import { useMutation, useQuery } from "@apollo/client";
 import { Pencil, PlusCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ProblemsPage() {
-    const { problems } = useAppSelector(state => state.problems);
+
+    const { data, loading } = useQuery(GET_ALL_PROGLEM);
+    const [DeleteCodingProblem] = useMutation(DELETE_PROBLEM);
     const dispatch = useAppDispatch();
-    const handleDelete = (id: string) => {
+    const { problems } = useAppSelector(state => state.problems);
+
+    useEffect(() => {
+        if (data?.getAllCodingProblems.success)
+            dispatch(setproblems(data.getAllCodingProblems.problems));
+    }, [data, loading])
+
+
+    const handleDelete = async (id: string) => {
         if (!id) {
             console.log("there is no such problem :>");
             return;
         }
-        dispatch(removeProblem(id));
-        showToast("Problem Deleted Successfully", "success");
+        try {
+            const res = await DeleteCodingProblem({ variables: { id: id } });
+            if (res.data.deleteCodingProblem) {
+                dispatch(removeProblem(id));
+                showToast("Problem Deleted Successfully", "success");
+            } else {
+                console.log("Unable to delete problem");
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
-
+    if (loading) {
+        return <div>Loading...</div>
+    }
     return (
         <SectionWrapper>
             <div className="container mx-auto py-8">
@@ -54,14 +79,11 @@ export default function ProblemsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {problems.map((problem) => (
+                            {problems.map((problem: CodingProblemType) => (
                                 <TableRow key={problem.id}>
                                     <TableCell className="font-medium">{problem.title}</TableCell>
                                     <TableCell>
-                                        <Badge
-                                            variant="secondary"
-                                            className={difficultyColors[problem.difficulty]}
-                                        >
+                                        <Badge className={difficultyColors[problem.difficulty.toLowerCase()]}>
                                             {problem.difficulty}
                                         </Badge>
                                     </TableCell>

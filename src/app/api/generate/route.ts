@@ -33,7 +33,7 @@ export async function POST(req: Request) {
             "title": "string",
             "description": "string",
             "language": "string",
-            "source_code": "string"
+            "sourceCode": "string"
         prompt: ${prompt}`;
         const result = await model.generateContent(query);
 

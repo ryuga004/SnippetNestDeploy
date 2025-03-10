@@ -4,9 +4,9 @@ export interface Snippet {
     description: string;
     language: string;
     tags: string[];
-    source_code: string;
+    sourceCode: string;
     author: {
-        author_id: string;
+        id: string;
         username: string;
         avatar: string;
     };
@@ -24,7 +24,7 @@ export interface GeneratedCodeType {
     description: string,
     language: string,
     // tags : string [],
-    source_code: string,
+    sourceCode: string,
 }
 
 interface TestCaseType {
@@ -57,8 +57,12 @@ export interface User {
 
 export interface Submission {
     id: string,
-    problem_id: string,
-    user_id: string,
+    problem: {
+        id: string
+    },
+    author: {
+        id: string
+    }
     createdAt: Date,
     language: string,
     status: boolean,
@@ -67,7 +71,9 @@ export interface Submission {
 
 export interface Solution {
     id: string;
-    problem_id: string;
+    problem: {
+        id: string
+    },
     explanation: string;
     answer: {
         language: string;

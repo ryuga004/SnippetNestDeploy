@@ -46,7 +46,7 @@ const ModalWrapper = ({ children, handleClose, heading, isOpen }: ModalWrapperPr
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
             <div
                 ref={modalRef}
                 className="w-max-content h-[max-content] transform transition-all duration-300 opacity-0 scale-95 modal-enter"

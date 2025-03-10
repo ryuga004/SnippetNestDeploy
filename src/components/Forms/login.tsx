@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { showToast } from "@/lib";
+import { GET_ME, LOGIN_USER, REGISTER_USER } from "@/lib/services";
 import { useAppDispatch } from "@/redux/redux-hooks";
 import { setUser } from "@/redux/slice/userSlice";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import Image from "next/image";
-import { gql, useMutation } from "@apollo/client";
-import { showToast } from "@/lib";
-import { REGISTER_USER } from "@/lib/services";
+import { useState } from "react";
 
 interface FormDataType {
     username?: string;
@@ -37,6 +37,8 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
     const [registerUser] = useMutation(REGISTER_USER);
+    const [loginUser] = useMutation(LOGIN_USER);
+    const [GetMe] = useLazyQuery(GET_ME);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -68,7 +70,41 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
                 console.error("Registration Error:", err);
             }
         } else {
+            try {
+                const res = await loginUser({
+                    variables: {
+                        username: formData.username!,
+                        password: formData.password!
+                    }
+                })
+                if (res.data.loginUser.success) {
+                    showToast(res.data.loginUser.message, "success");
 
+                    try {
+                        const { data } = await GetMe();
+                        if (data.GetMe.success) {
+                            const user = data.GetMe.user;
+                            dispatch(
+                                setUser({
+                                    id: user.id,
+                                    username: user.username,
+                                    email: user.email,
+                                    avatar: user?.avatar || "/user_logo.png",
+                                })
+                            );
+                        } else {
+                            console.log("Unable to fetch current user");
+                        }
+
+                    } catch (error) {
+                        console.error(error);
+                    }
+                } else {
+                    console.log("Login Failed");
+                }
+            } catch (error) {
+                console.error(error);
+            }
         }
         handleClose();
     };
@@ -113,30 +149,30 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
                     )}
 
                     {/* Username Field */}
+                    <div>
+                        <label className="block text-gray-600 font-medium">Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                            placeholder="Enter your username"
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    {/* Email Field */}
                     {isRegister && (
                         <div>
-                            <label className="block text-gray-600 font-medium">Username</label>
+                            <label className="block text-gray-600 font-medium">Email</label>
                             <input
-                                type="text"
-                                name="username"
+                                type="email"
+                                name="email"
                                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-                                placeholder="Enter your username"
+                                placeholder="Enter your email"
                                 onChange={handleChange}
                             />
                         </div>
                     )}
-
-                    {/* Email Field */}
-                    <div>
-                        <label className="block text-gray-600 font-medium">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-                            placeholder="Enter your email"
-                            onChange={handleChange}
-                        />
-                    </div>
 
                     {/* Password Field */}
                     <div>

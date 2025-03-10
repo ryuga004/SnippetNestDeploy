@@ -2,23 +2,24 @@
 
 import { openEditModalProps } from "@/app/snippets/page";
 import CodeEditor from "@/components/codeEditor";
-import CodePreview from "@/components/codePreview";
 import EditSnippet from "@/components/Forms/editSnippet";
 import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import SectionWrapper from "@/hoc/sectionWrapper";
+import { showToast } from "@/lib";
+import { DELETE_SNIPPET } from "@/lib/services";
 
 import { Snippet } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeSnippet } from "@/redux/slice/snippetSlice";
+import { useMutation } from "@apollo/client";
 import { Check, Copy, Pen, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 const TemplateDetail = () => {
     const [copied, setCopied] = useState(false);
-    const [snippet, setSnippet] = useState<Snippet | null>(null);
+    const [snippet, setSnippet] = useState<Snippet>();
     const { id } = useParams();
     const snippets = useAppSelector(state => state.snippets.snippets);
     const [loading, setLoading] = useState<boolean>(true);
@@ -28,27 +29,35 @@ const TemplateDetail = () => {
     const [openEditModal, setOpenEditModal] = useState<openEditModalProps>({
         open: false,
     });
+    const [deleteSnippet] = useMutation(DELETE_SNIPPET);
     useEffect(() => {
+        if (!id || snippets.length === 0) return;
         const snip = snippets.find((item) => item.id === id);
+        // console.log(id);
         if (snip) {
             setLoading(false);
         }
-        setSnippet(snip || null);
-    }, [id, snippets]);
+        setSnippet(snip);
+    }, [id, snippets, snippet]);
 
     const copyToClipboard = (code: string) => {
         navigator.clipboard.writeText(code);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
-    const handleDeleteSnippet = () => {
+    const handleDeleteSnippet = async () => {
         if (!snippet) return;
-        dispatch(removeSnippet(snippet.id));
-        toast.success(`Snippet "${snippet.title}" deleted`, {
-            id: `delete-${snippet.id}`,
-            closeButton: true,
-        });
-        router.push("/snippets");
+        try {
+            await deleteSnippet({ variables: { deleteSnippetId: snippet.id } }).then(() => {
+                showToast('Snippet deleted successfully', 'success');
+                dispatch(removeSnippet(snippet.id));
+                router.push("/snippets");
+            }).catch(err => {
+                console.log(err);
+            })
+        } catch (error) {
+            console.error(error);
+        }
     }
     if (!snippet) return <div className="text-center text-2xl font-semibold text-red-500">Snippet Not Found</div>;
     if (loading) return <Loader />
@@ -68,7 +77,7 @@ const TemplateDetail = () => {
                             </li>
                         ))}
                     </ul>
-                    {(user?.id === snippet.author.author_id) && <ul className="mt-6 flex flex-wrap gap-3">
+                    {(user?.id === snippet.author.id) && <ul className="mt-6 flex flex-wrap gap-3">
                         <li><Button variant="outline" onClick={() => setOpenEditModal({
                             open: true,
                             snippet: snippet
@@ -83,7 +92,7 @@ const TemplateDetail = () => {
                     <Copy size={28} /> <span>Snippet</span>
                 </h2>
                 <Button variant="ghost"
-                    onClick={() => copyToClipboard(snippet.source_code)}
+                    onClick={() => copyToClipboard(snippet.sourceCode)}
                     className="absolute top-4 right-4 px-4 py-2 bg-gray-500 hover:bg-gray-200 text-white rounded-lg flex items-center space-x-2 shadow-md"
 
                 >
@@ -93,7 +102,7 @@ const TemplateDetail = () => {
                 <div className="mt-6 relative">
 
 
-                    {snippet.language !== 'react' ? <CodeEditor sourceCode={snippet.source_code} /> : <CodePreview code={snippet.source_code} />}
+                    <CodeEditor sourceCode={snippet.sourceCode} />
 
 
                 </div>

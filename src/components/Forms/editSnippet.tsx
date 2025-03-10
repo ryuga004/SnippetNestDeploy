@@ -1,15 +1,18 @@
+"use client";
 import { Card, CardContent } from "@/components/ui/card";
 import CenterEditModal from '@/hoc/modals/editModal';
 import { showToast } from '@/lib';
+import { UPDATE_SNIPPET } from "@/lib/services";
 import { Snippet } from '@/lib/types';
 import { useAppDispatch } from '@/redux/redux-hooks';
-import { updateSnippet } from '@/redux/slice/snippetSlice';
+import { useMutation } from "@apollo/client";
 import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { ScrollArea } from '../ui/scroll-area';
 import { Textarea } from '../ui/textarea';
+import { editSnippet } from "@/redux/slice/snippetSlice";
 
 interface SnippetEditFormProps {
     snippet: Snippet;
@@ -23,26 +26,43 @@ const EditSnippet = ({ snippet, handleClose }: SnippetEditFormProps) => {
         language: snippet.language,
         tagValue: "",
         tags: [...snippet.tags],
-        source_code: snippet.source_code,
+        sourceCode: snippet.sourceCode,
     });
     const dispatch = useAppDispatch();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const [updateSnippet] = useMutation(UPDATE_SNIPPET);
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(updateSnippet({
-            ...snippet,
-            title: formData.title,
-            description: formData.description,
-            language: formData.language,
-            tags: formData.tags,
-            source_code: formData.source_code
-        }))
-        showToast("Snippet Updated Successfully", "success");
-        handleClose();
+        try {
+            const { tagValue, ...rest } = formData;
+            console.log(tagValue);
+            const res = await updateSnippet({
+                variables: {
+                    input: {
+                        id: snippet.id,
+                        ...rest
+                    }
+                }
+            })
+            if (res.data.updateSnippet.success) {
+                dispatch(editSnippet({
+                    id: snippet.id,
+                    title: formData.title,
+                    description: formData.description,
+                    language: formData.language,
+                    tags: formData.tags,
+                    sourceCode: formData.sourceCode
+                }))
+                showToast("Snippet Updated Successfully", "success");
+                handleClose();
+            } else { console.log("Snippet update failed") };
+        } catch (error) {
+            console.error(error);
+        } finally {
+        }
     };
     const addTag = () => {
         if (formData.tagValue.trim() && !formData.tags.includes(formData.tagValue.trim())) {
@@ -150,8 +170,8 @@ const EditSnippet = ({ snippet, handleClose }: SnippetEditFormProps) => {
                                     Source Code
                                 </label>
                                 <Textarea
-                                    name="source_code"
-                                    value={formData.source_code}
+                                    name="sourceCode"
+                                    value={formData.sourceCode}
                                     onChange={handleChange}
                                     className="bg-gray-900 text-white font-mono border border-pink-500 focus:ring-2 focus:ring-pink-400 rounded-lg px-4 py-3 transition-all hover:border-pink-300 h-full resize-y"
                                     rows={10}

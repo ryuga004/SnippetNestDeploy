@@ -6,9 +6,11 @@ import prisma from "../prisma";
 import { User } from "@prisma/client";
 
 const SECRET = process.env.JWT_SECRET!
-
+interface Context {
+    user?: User
+}
 export const registerUser = async (
-    _: any,
+    _: unknown,
     { avatar, username, email, password }: { avatar?: string; username: string; email: string; password: string }
 ) => {
     try {
@@ -40,16 +42,15 @@ export const registerUser = async (
             message: "User registered successfully",
             user: newUser,
         };
-    } catch (error: any) {
-        throw new Error(error.message || "Something went wrong");
+    } catch {
+        throw new Error("Something went wrong");
     }
 }
 
 
 export const loginUser = async (
-    _: any,
-    { username, password }: { username: string; password: string },
-    { res }: { res: any }
+    _: unknown,
+    { username, password }: { username: string; password: string }
 ) => {
     try {
 
@@ -82,9 +83,10 @@ export const loginUser = async (
         return {
             success: true,
             message: "Login successful",
+            user: user,
         };
-    } catch (error: any) {
-        throw new Error(error.message || "Something went wrong");
+    } catch {
+        throw new Error("Something went wrong");
     }
 }
 
@@ -93,14 +95,14 @@ export const getUserFromToken = async (token?: string) => {
         if (!token) return null;
         const decoded = jwt.verify(token, SECRET) as { userId: string };
         return await prisma.user.findUnique({ where: { id: decoded.userId } });
-    } catch (error: any) {
-        console.error("Auth Error:", error?.message);
+    } catch {
+        console.error("Auth Error:");
         return null;
     }
 };
 
 
-export const GetMe = async (_: any, __: any, context: any) => {
+export const GetMe = async (_: unknown, __: unknown, context: Context) => {
     if (!context.user) {
         throw new Error("Unautenticated: Please log in");
     }
@@ -110,8 +112,8 @@ export const GetMe = async (_: any, __: any, context: any) => {
         user: context.user,
     }
 }
-export const getAllUsers = async (_: any, __: any, context: any) => {
-    if (context.user.role === "ADMIN") {
+export const getAllUsers = async (_: unknown, __: unknown, context: Context) => {
+    if (context?.user?.role === "ADMIN") {
         throw new Error("Unauthorized: Only for admin use ");
     }
     const all_user = await prisma.user.findMany({ include: { social: true, stats: true, achievements: true } });
@@ -122,7 +124,7 @@ export const getAllUsers = async (_: any, __: any, context: any) => {
     }
 }
 
-export const getUserById = async (_: any, { id }: { id: string }) => {
+export const getUserById = async (_: unknown, { id }: { id: string }) => {
     const _user = await prisma.user.findUnique({
         where: { id },
         include: {
@@ -143,7 +145,7 @@ export const getUserById = async (_: any, { id }: { id: string }) => {
     }
 }
 
-export const deleteUser = async (_: any, { id }: { id: string }) => {
+export const deleteUser = async (_: unknown, { id }: { id: string }) => {
     const deleteUser = await prisma.user.delete({
         where: { id },
     })
@@ -156,7 +158,7 @@ export const deleteUser = async (_: any, { id }: { id: string }) => {
     }
 }
 
-export const logoutUser = async (_: any, __: any) => {
+export const logoutUser = async () => {
     const cookieStore = await cookies();
     cookieStore.delete("auth");
     return {
@@ -167,7 +169,7 @@ export const logoutUser = async (_: any, __: any) => {
 
 
 
-export const updateUser = async (_: any, { id, input }: { id: string; input: Partial<User> }) => {
+export const updateUser = async (_: unknown, { id, input }: { id: string; input: Partial<User> }) => {
     try {
         const existingUser = await prisma.user.findUnique({ where: { id } });
         if (!existingUser) {
@@ -180,8 +182,9 @@ export const updateUser = async (_: any, { id, input }: { id: string; input: Par
 
         // Filter out undefined fields
         const filteredInput = Object.fromEntries(
-            Object.entries(input).filter(([_, value]) => value !== undefined)
+            Object.entries(input).filter(([, value]) => value !== undefined)
         );
+
 
         if (Object.keys(filteredInput).length === 0) {
             return {
@@ -201,11 +204,7 @@ export const updateUser = async (_: any, { id, input }: { id: string; input: Par
             message: "User updated successfully",
             user: updatedUser,
         };
-    } catch (error: any) {
-        return {
-            success: false,
-            message: "User update failed: " + error.message,
-            user: null,
-        };
+    } catch {
+        throw new Error("Something went wrong");
     }
 };

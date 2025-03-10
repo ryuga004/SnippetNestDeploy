@@ -24,6 +24,8 @@ model User {
   achievements Achievement[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  Snippet      Snippet[]
+  Submission   Submission[]
 }
 
 enum Role {
@@ -54,4 +56,91 @@ model Achievement {
   date   DateTime
   user   User     @relation(fields: [userId], references: [id])
   userId String
+}
+
+model CodingProblem {
+  id            String     @id @default(uuid())
+  title         String
+  description   String
+  inputFormat   String
+  outputFormat  String
+  exampleInput  String
+  exampleOutput String
+  constraints   String
+  difficulty    Difficulty
+  topic         String[]
+
+  testCases  TestCase[]
+  Submission Submission[]
+  Solution   Solution[]
+
+  @@map("coding_problems")
+}
+
+model TestCase {
+  id             String        @id @default(uuid())
+  input          String
+  expectedOutput String
+  actualOutput   String?
+  problemId      String
+  problem        CodingProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@map("test_cases")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Snippet {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  language    String
+  tags        String[]
+  sourceCode  String
+
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("snippets")
+}
+
+model Submission {
+  id            String        @id @default(cuid())
+  problem       CodingProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId     String
+  author        User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId      String
+  createdAt     DateTime      @default(now())
+  language      String
+  status        Boolean       @default(false)
+  submittedCode String
+
+  @@map("submissions")
+}
+
+model Solution {
+  id          String        @id @default(cuid())
+  problem     CodingProblem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId   String
+  explanation String
+  answers     Answer[]
+
+  @@map("solutions")
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  language   String
+  code       String
+  solution   Solution @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+  solutionId String
+
+  @@map("answers")
 }

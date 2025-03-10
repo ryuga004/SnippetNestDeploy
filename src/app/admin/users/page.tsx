@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,30 +12,18 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import SectionWrapper from "@/hoc/sectionWrapper";
+import { GET_ALL_USER } from "@/lib/services";
+import { useQuery } from "@apollo/client";
+import { User } from "@prisma/client";
 import { Pencil, PlusCircle, Trash2, Users } from "lucide-react";
 import Link from "next/link";
 
-// Mock user data
-const users = [
-    { id: "1", name: "John Doe", email: "john@example.com", role: "Admin", status: "Active" },
-    { id: "2", name: "Jane Smith", email: "jane@example.com", role: "User", status: "Inactive" },
-    { id: "3", name: "Alice Brown", email: "alice@example.com", role: "User", status: "Active" },
-    { id: "4", name: "Bob Johnson", email: "bob@example.com", role: "Moderator", status: "Active" },
-];
-
-// interface roleColorsType {
-//     Admin: string,
-//     User: string,
-//     Moderator: string,
-// }
-
-// const roleColors: roleColorsType = {
-//     Admin: "bg-red-500 text-white",
-//     User: "bg-blue-500 text-white",
-//     Moderator: "bg-green-500 text-white",
-// };
-
 export default function UsersPage() {
+    const { data, loading, error } = useQuery(GET_ALL_USER);
+    if (loading) {
+        return <div>Loading...</div>
+    }
+    if (error) return <p>Error fetching users: {error.message}</p>;
     return (
         <SectionWrapper>
             <div className="container mx-6 py-8">
@@ -55,6 +44,7 @@ export default function UsersPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>Avatar</TableHead>
                                 <TableHead>Username</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Role</TableHead>
@@ -64,13 +54,21 @@ export default function UsersPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users.map((user) => (
+                            {data?.getAllUsers?.users?.map((user: Partial<User>) => (
                                 <TableRow key={user.id}>
-                                    <TableCell className="font-medium">{user.name}</TableCell>
+                                    <TableCell>
+                                        <Avatar className="cursor-pointer w-8 h-8 bg-red-500">
+                                            <AvatarImage className="object-cover" src={user?.avatar || "/user_logo.png"} alt="User Avatar" />
+                                            <AvatarFallback className="text-xs">{user.username?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                                        </Avatar>
+
+                                    </TableCell>
+
+                                    <TableCell className="font-medium">{user.username}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>
                                         <Badge className={"bg-gray-500 text-white"}>
-                                            {user.role}
+                                            {user?.role ? user.role : "USER"}
                                         </Badge>
                                     </TableCell>
 

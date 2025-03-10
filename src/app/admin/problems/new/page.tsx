@@ -20,13 +20,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { showToast } from "@/lib";
+import { CREATE_PROBLEM } from "@/lib/services";
 import { useAppDispatch } from "@/redux/redux-hooks";
 import { addProblem } from "@/redux/slice/problemSlice";
+import { useMutation } from "@apollo/client";
 import { PlusCircle, X } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 
 interface ProblemForm {
-    id: string;
     title: string;
     description: string;
     inputFormat: string;
@@ -44,7 +45,6 @@ export default function NewProblemPage() {
 
     const form = useForm<ProblemForm>({
         defaultValues: {
-            id: crypto.randomUUID(),
             title: "",
             description: "",
             inputFormat: "",
@@ -62,11 +62,32 @@ export default function NewProblemPage() {
         control: form.control,
         name: "testCases",
     });
-
+    const [createCodingProblem] = useMutation(CREATE_PROBLEM);
     const onSubmit = async (values: ProblemForm) => {
-        console.log(values);
-        dispatch(addProblem(values));
-        showToast("Problem added successfully", "success");
+        try {
+            const res = await createCodingProblem({
+                variables: {
+                    input: {
+                        ...values,
+                        topic: values.topic.length > 0 ? values.topic : [""],
+                        difficulty: values.difficulty.toUpperCase(),
+                    }
+                }
+            })
+
+            if (res.data.createCodingProblem.id) {
+                dispatch(addProblem({
+                    ...values,
+                    id: res.data.createCodingProblem.id
+                }));
+                showToast("Problem added successfully", "success");
+                form.reset();
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+
     };
 
     return (
@@ -104,6 +125,19 @@ export default function NewProblemPage() {
                             />
 
                             <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="constraints"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Constraints</FormLabel>
+                                            <FormControl>
+                                                <Textarea {...field} placeholder="Describe problem constraints" required />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
                                 <FormField
                                     control={form.control}
                                     name="inputFormat"
@@ -152,7 +186,31 @@ export default function NewProblemPage() {
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="exampleInput"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Example Input</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field} placeholder="Provide an example input" required />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
 
+                            <FormField
+                                control={form.control}
+                                name="exampleOutput"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Example Output</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field} placeholder="Provide an example output" required />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-lg font-semibold">Test Cases</h3>

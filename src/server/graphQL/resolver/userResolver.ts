@@ -5,10 +5,10 @@ export const userResolvers = {
         getAllUsers,
         GetMe,
         getUserById,
-        logoutUser,
-        deleteUser,
     },
     Mutation: {
+        deleteUser,
+        logoutUser,
         registerUser,
         loginUser,
         updateUser,

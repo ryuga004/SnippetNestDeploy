@@ -1,5 +1,5 @@
 
-import { problems } from '@/lib/codingProblemData';
+import { removeTypename } from '@/lib';
 import { CodingProblemType } from '@/lib/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -9,9 +9,8 @@ interface problemstate {
     loading: boolean;
     error: string | null;
 }
-
 const initialState: problemstate = {
-    problems: problems,
+    problems: [],
     loading: false,
     error: null,
 };
@@ -22,7 +21,8 @@ const problemSlice = createSlice({
     initialState,
     reducers: {
         setproblems: (state, action: PayloadAction<CodingProblemType[]>) => {
-            state.problems = action.payload;
+
+            state.problems = action.payload.map(removeTypename);
         },
         addProblem: (state, action: PayloadAction<CodingProblemType>) => {
             state.problems.push(action.payload);

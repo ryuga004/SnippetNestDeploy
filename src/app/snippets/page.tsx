@@ -20,10 +20,13 @@ import {
 } from "@/components/ui/sheet";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import useSnippetFilters from "@/hooks/useSnippetFilter";
+import { GET_ALL_SNIPPETS_ADMIN } from "@/lib/services";
 import { Snippet } from "@/lib/types";
-import { useAppSelector } from "@/redux/redux-hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
+import { setSnippets } from "@/redux/slice/snippetSlice";
+import { useQuery } from "@apollo/client";
 import { RefreshCcw, Search, SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface openEditModalProps {
     open: boolean,
@@ -35,7 +38,13 @@ export default function SnippetsPage() {
     const [openEditModal, setOpenEditModal] = useState<openEditModalProps>({
         open: false
     });
-
+    const dispatch = useAppDispatch();
+    const { data, loading } = useQuery(GET_ALL_SNIPPETS_ADMIN);
+    useEffect(() => {
+        if (!loading && data.getAllSnippets.snippets) {
+            dispatch(setSnippets(data.getAllSnippets.snippets));
+        }
+    }, [data]);
     // Retrieve snippets from Redux store
     const snippetsData = useAppSelector((state) => state.snippets);
     const { filters, handleChange, resetFilters, filteredSnippets } = useSnippetFilters(snippetsData?.snippets || []);

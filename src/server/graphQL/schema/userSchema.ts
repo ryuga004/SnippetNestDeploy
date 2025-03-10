@@ -44,8 +44,6 @@ export const userTypeDefs = `#graphql
     getUserById(id: ID!): getUserByIdResponse!
     achievements(userId: ID!): [Achievement!]!
     GetMe: GetMeResponse!
-    logoutUser:logoutUserResponse!
-    deleteUser(id:ID!) : deleteUserResponse!
   }
 
   type Mutation {
@@ -62,6 +60,8 @@ export const userTypeDefs = `#graphql
     ):loginUserResponse!
     
     updateUser(id: ID!, input: UpdateUserInput!):updateUserResponse!
+    logoutUser:logoutUserResponse!
+    deleteUser(id:ID!) : deleteUserResponse!
   }
   # reponses types 
   input UpdateUserInput {
@@ -78,6 +78,7 @@ export const userTypeDefs = `#graphql
   type loginUserResponse {
     success : Boolean!,
     message : String!,
+    user : User!,
   }
   type GetMeResponse {
     success : Boolean!,

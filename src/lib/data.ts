@@ -8,7 +8,7 @@ export const snippets: Snippet[] = [
         description: 'A sleek portfolio template for creative professionals',
         tags: ['Minimal', 'Dark Mode', 'Responsive'],
         language: "react",
-        source_code: `
+        sourceCode: `
 import React from "react";
 
 export default function Portfolio() {
@@ -27,7 +27,7 @@ export default function Portfolio() {
     );
 }`,
         author: {
-            author_id: '101',
+            id: '101',
             username: 'Alex Chen',
             avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1470&fit=crop'
         },
@@ -39,7 +39,7 @@ export default function Portfolio() {
         description: 'Complete e-commerce solution with modern design',
         tags: ['Shop', 'Cart', 'Dashboard'],
         language: "react",
-        source_code: `
+        sourceCode: `
 import React from "react";
 
 export default function ECommerce() {
@@ -52,7 +52,7 @@ export default function ECommerce() {
 }`,
 
         author: {
-            author_id: '102',
+            id: '102',
             username: 'Sarah Miller',
             avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1470&fit=crop'
         },
@@ -63,7 +63,7 @@ export default function ECommerce() {
         description: 'Professional blog template with multiple layouts',
         tags: ['Content', 'SEO', 'Responsive'],
         language: "react",
-        source_code: `
+        sourceCode: `
 import React from "react";
 
 export default function Blog() {
@@ -75,7 +75,7 @@ export default function Blog() {
     );
 }`,
         author: {
-            author_id: '103',
+            id: '103',
             username: 'Mike Johnson',
             avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1470&fit=crop'
         },

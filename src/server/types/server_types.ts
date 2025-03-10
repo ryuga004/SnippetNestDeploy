@@ -1,8 +1,8 @@
 export interface updateUserType {
-    avatar: String
-    coverImage: String
-    bio: String
-    username: String
-    email: String
+    avatar: string,
+    coverImage: string,
+    bio: string,
+    username: string,
+    email: string,
     role: "ADMIN" | "USER"
 }

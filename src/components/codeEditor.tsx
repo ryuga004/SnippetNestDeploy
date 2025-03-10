@@ -30,7 +30,8 @@ interface CodeEditorProps {
     sourceCode?: string,
 }
 export default function CodeEditor({ sourceCode }: CodeEditorProps) {
-    const [code, setCode] = useState(sourceCode ? sourceCode : defaultCode);
+    // console.log(sourceCode)
+    const [code, setCode] = useState<string>(sourceCode ? sourceCode : defaultCode);
     const [output, setOutput] = useState<string | null>(null);
     const [isRunning, setIsRunning] = useState(false);
     const [language, setLanguage] = useState("c++");
@@ -59,7 +60,7 @@ export default function CodeEditor({ sourceCode }: CodeEditorProps) {
                     "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
                 },
                 body: JSON.stringify({
-                    source_code: code,
+                    sourceCode: code,
                     language_id: languageMap[language],
                     stdin: "",
                 }),

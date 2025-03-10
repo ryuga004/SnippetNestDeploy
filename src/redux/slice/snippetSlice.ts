@@ -1,4 +1,4 @@
-import { snippets } from '@/lib/data';
+import { removeTypename } from '@/lib';
 import { Snippet } from '@/lib/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -10,7 +10,7 @@ interface SnippetState {
 }
 
 const initialState: SnippetState = {
-    snippets: snippets,
+    snippets: [],
     loading: false,
     error: null,
 };
@@ -21,7 +21,7 @@ const snippetSlice = createSlice({
     initialState,
     reducers: {
         setSnippets: (state, action: PayloadAction<Snippet[]>) => {
-            state.snippets = action.payload;
+            state.snippets = action.payload.map(removeTypename);
         },
         addSnippet: (state, action: PayloadAction<Snippet>) => {
             state.snippets.push(action.payload);
@@ -29,10 +29,15 @@ const snippetSlice = createSlice({
         removeSnippet: (state, action: PayloadAction<string>) => {
             state.snippets = state.snippets.filter(snippet => snippet.id !== action.payload);
         },
-        updateSnippet: (state, action: PayloadAction<Snippet>) => {
-            const index = state.snippets.findIndex(snippet => snippet.id === action.payload.id);
+        editSnippet: (state, action: PayloadAction<Partial<Snippet>>) => {
+            const index = state.snippets.findIndex(snippet => snippet.id === action.payload?.id);
             if (index !== -1) {
-                state.snippets[index] = action.payload;
+                state.snippets[index] = {
+                    ...state.snippets[index],
+                    ...action.payload
+                };
+            } else {
+                console.warn(`Snippet with ID ${action.payload?.id} not found.`);
             }
         },
         setLoading: (state, action: PayloadAction<boolean>) => {
@@ -45,6 +50,6 @@ const snippetSlice = createSlice({
 });
 
 
-export const { setSnippets, addSnippet, removeSnippet, updateSnippet, setLoading, setError } = snippetSlice.actions;
+export const { setSnippets, addSnippet, removeSnippet, editSnippet, setLoading, setError } = snippetSlice.actions;
 
 export default snippetSlice.reducer;

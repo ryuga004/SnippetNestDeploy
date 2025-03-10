@@ -26,7 +26,7 @@ export default function SnippetCard({ snippet, setOpenEditModal }: SnippetCardPr
     const dispatch = useAppDispatch();
     useEffect(() => {
         if (isLoggedIn && user) {
-            setOwner((snippet.author.author_id === user.id));
+            setOwner((snippet.author.id === user.id));
         }
     }, [isLoggedIn, user])
     const handleDeleteSnippet = () => {

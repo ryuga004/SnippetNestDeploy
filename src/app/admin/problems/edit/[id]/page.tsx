@@ -20,8 +20,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { showToast } from "@/lib";
+import { UPDATE_PROBLEM } from "@/lib/services";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { updateProblem } from "@/redux/slice/problemSlice";
+import { useMutation } from "@apollo/client";
 import { PlusCircle, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
@@ -77,10 +79,29 @@ export default function EditProblemPage() {
         }
     }, [problem_id, problems, form, replace]);
 
+    const [updateCodingProblem] = useMutation(UPDATE_PROBLEM);
     const onSubmit = async (values: ProblemForm) => {
-        console.log(values);
-        dispatch(updateProblem(values));
-        showToast("Problem Updated successfully", "success");
+        try {
+            const { id, ...rest } = values;
+            const res = await updateCodingProblem({
+                variables: {
+                    updateCodingProblemId: id!,
+                    input: {
+                        ...rest,
+                        topic: rest.topic.length > 0 ? rest.topic : [""],
+                        difficulty: rest?.difficulty.toUpperCase(),
+                    }
+                }
+            })
+            if (res.data.updateCodingProblem.id) {
+                dispatch(updateProblem(values));
+                showToast("Problem Updated successfully", "success");
+            } else {
+                console.log("Unable to update the problem ....");
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
@@ -145,28 +166,67 @@ export default function EditProblemPage() {
                                 />
                             </div>
 
-                            <FormField
-                                control={form.control}
-                                name="difficulty"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Difficulty</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="difficulty"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Difficulty</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select difficulty" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="easy">Easy</SelectItem>
+                                                    <SelectItem value="medium">Medium</SelectItem>
+                                                    <SelectItem value="hard">Hard</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="constraints"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Constraints</FormLabel>
                                             <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select difficulty" />
-                                                </SelectTrigger>
+                                                <Textarea {...field} placeholder="Describe problem constraints" required />
                                             </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="easy">Easy</SelectItem>
-                                                <SelectItem value="medium">Medium</SelectItem>
-                                                <SelectItem value="hard">Hard</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormItem>
-                                )}
-                            />
+                                        </FormItem>
+                                    )}
+                                />
 
+                                <FormField
+                                    control={form.control}
+                                    name="exampleInput"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Example Input</FormLabel>
+                                            <FormControl>
+                                                <Textarea {...field} placeholder="Provide an example input" required />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="exampleOutput"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Example Output</FormLabel>
+                                            <FormControl>
+                                                <Textarea {...field} placeholder="Provide an example output" required />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
                                     <h3 className="text-lg font-semibold">Test Cases</h3>

@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SectionWrapper from '@/hoc/sectionWrapper';
 import { difficultyColors, showToast } from '@/lib';
-import { problems } from '@/lib/codingProblemData';
+
 import { solutions } from '@/lib/solutionsData';
 import { Solution, Submission } from '@/lib/types';
 import { useAppDispatch, useAppSelector } from '@/redux/redux-hooks';
@@ -91,12 +91,12 @@ function ProblemInterFace() {
     const [testCases, setTestCases] = useState<TestCaseType[]>([]);
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle');
     const [activeTab, setActiveTab] = useState('description');
-    const { problem_id } = useParams() as { problem_id: string };
+    const { problem_id } = useParams();
     const [solution, setSolution] = useState<Solution>();
     const [generating, setGenerating] = useState<boolean>(false);
     const router = useRouter();
     const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-
+    const { problems } = useAppSelector(state => state.problems);
     const toggleCollapse = (language: string) => {
         setExpanded((prev) => ({ ...prev, [language]: !prev[language] }));
     };
@@ -106,7 +106,7 @@ function ProblemInterFace() {
     };
     useEffect(() => {
         const foundProblem = problems.find(problem => problem.id === problem_id);
-
+        console.log(foundProblem);
         if (foundProblem) {
             setProblem(foundProblem);
             setTestCases(foundProblem.testCases)
@@ -410,7 +410,7 @@ function ProblemInterFace() {
                     </div>
                     <div className="flex items-center gap-4">
                         <Badge variant="outline" className="bg-primary/10 hover:bg-primary/20 transition-colors">
-                            Problem #{problem.id}
+                            Problem # {problem.id.slice(0, 5)}
                         </Badge>
                         <Badge className={`rounded-lg px-3 py-1 text-sm ${difficultyColors[problem.difficulty]}`}>
                             {problem.difficulty.toUpperCase()}
