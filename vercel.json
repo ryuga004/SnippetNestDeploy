@@ -7,10 +7,5 @@
             "source": "/api/graphql",
             "destination": "/api/graphql"
         }
-    ],
-    "functions": {
-        "api/graphql.ts": {
-            "maxDuration": 10
-        }
-    }
+    ]
 }
