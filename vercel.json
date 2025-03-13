@@ -1,7 +1,7 @@
 {
     "build": {
         "env": {
-            "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/SnippetNest"
+            "DATABASE_URL": "postgresql://postgres:postgres@db.xyboxgnfdvjbksgbhhkc.supabase.co:5432/postgres"
         }
     }
 }
