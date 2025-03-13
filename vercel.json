@@ -1,11 +1,5 @@
 {
     "env": {
         "DATABASE_URL": "postgresql://postgres:postgresryuga@db.xyboxgnfdvjbksgbhhkc.supabase.co:5432/postgres"
-    },
-    "rewrites": [
-        {
-            "source": "/api/graphql",
-            "destination": "/api/graphql"
-        }
-    ]
+    }
 }
