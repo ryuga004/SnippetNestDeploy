@@ -1,10 +1,5 @@
 {
     "env": {
         "DATABASE_URL": "postgresql://postgres:postgresryuga@db.xyboxgnfdvjbksgbhhkc.supabase.co:5432/postgres"
-    },
-    "functions": {
-        "api/graphql": {
-            "maxDuration": 10
-        }
     }
 }
