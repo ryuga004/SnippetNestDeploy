@@ -1,7 +1,7 @@
 {
     "build": {
         "env": {
-            "DATABASE_URL": "postgresql://postgres:postgres@db.xyboxgnfdvjbksgbhhkc.supabase.co:5432/postgres"
+            "DATABASE_URL": "postgresql://postgres:postgresryuga@db.xyboxgnfdvjbksgbhhkc.supabase.co:5432/postgres"
         }
     }
 }
