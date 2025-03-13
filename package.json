@@ -41,7 +41,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.2",
     "framer-motion": "^12.4.7",
-    "graphql": "^14.7.0",
+    "graphql": "^16.10.0",
     "gsap": "^3.12.7",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.475.0",
