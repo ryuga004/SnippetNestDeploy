@@ -8,7 +8,6 @@ interface createSubmissionType {
     language: string,
     status: boolean,
     submittedCode: string,
-    createdAt: string,
 }
 
 export const submissionResolvers = {
@@ -31,10 +30,12 @@ export const submissionResolvers = {
             const submissions = await prisma.submission.findMany({
                 where: { authorId: userId },
                 include: { problem: true, author: true },
+                orderBy: { createdAt: 'desc' },
             });
             if (!submissions) {
                 throw new Error("Unable to fetch submissions");
             }
+
             return {
                 success: true,
                 message: "Submissions fetched successfully",
@@ -53,7 +54,7 @@ export const submissionResolvers = {
                     authorId: context.user.id,
                     language: input.language,
                     submittedCode: input.submittedCode,
-                    status: false,
+                    status: input.status,
                 },
                 include: { problem: true, author: true },
             });
@@ -62,6 +63,25 @@ export const submissionResolvers = {
                 throw new Error("Unable to Create Submission");
             }
 
+            // update the points of user if submission is status is accepted and there is no previously accepted submission 
+            const value = (newSubmission.problem.difficulty === "HARD") ? 8 : ((newSubmission.problem.difficulty === 'MEDIUM') ? 4 : 2);
+            const existingAcceptedSubmission = await prisma.submission.findFirst({
+                where: {
+                    problemId: input.problemId,
+                    authorId: context.user.id,
+                    status: true,
+                },
+            });
+
+
+            if (input.status === true && !existingAcceptedSubmission) {
+                await prisma.user.update({
+                    where: { id: context.user.id },
+                    data: {
+                        points: { increment: value },
+                    },
+                });
+            }
             return {
                 success: true,
                 message: "Submission Code Successfully",

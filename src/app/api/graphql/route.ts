@@ -5,21 +5,24 @@ import { typeDefs } from "@/server/graphQL/schema/index";
 import { resolvers } from "@/server/graphQL/resolver/index";
 import { getUserFromToken } from "@/server/controllers/user";
 
-
 const server = new ApolloServer({
     typeDefs,
     resolvers,
 });
 
-
 const handler = startServerAndCreateNextHandler(server, {
     context: async (req, res) => {
         const cookieStore = await cookies();
         const authToken = cookieStore.get("auth")?.value;
-        const user = await getUserFromToken(authToken);
+        const user = (await getUserFromToken(authToken)) || undefined;
         return { res, req, authToken, user };
     },
 });
 
+export async function GET(req: Request) {
+    return handler(req);
+}
 
-export { handler as GET, handler as POST };
+export async function POST(req: Request) {
+    return handler(req);
+}

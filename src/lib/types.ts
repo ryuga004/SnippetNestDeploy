@@ -63,7 +63,6 @@ export interface Submission {
     author: {
         id: string
     }
-    createdAt: Date,
     language: string,
     status: boolean,
     submittedCode: string

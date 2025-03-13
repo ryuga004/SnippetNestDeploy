@@ -4,7 +4,7 @@ import { Solution } from "./types";
 export const solutions: Solution[] = [
     {
         id: "1",
-        problem_id: "1",
+        problem: { id: "1" },
         explanation: "The factorial of a number N is the product of all positive integers up to N. It can be calculated using recursion or iteration.",
         answer: [
             {
@@ -45,7 +45,9 @@ class Factorial {
     },
     {
         id: "2",
-        problem_id: "2",
+        problem: {
+            id: "2"
+        },
         explanation: "The sum of digits of a number is obtained by extracting each digit and adding them together.",
         answer: [
             {
@@ -93,7 +95,9 @@ class SumOfDigits {
     },
     {
         id: "3",
-        problem_id: "3",
+        problem: {
+            id: "3"
+        },
         explanation: "Reversing a number involves extracting digits and reconstructing the number in reverse order.",
         answer: [
             {

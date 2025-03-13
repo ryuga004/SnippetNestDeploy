@@ -73,6 +73,8 @@ model CodingProblem {
   testCases  TestCase[]
   Submission Submission[]
   Solution   Solution[]
+  createdAt  DateTime     @default(now())
+  // updatedAt  DateTime     @updatedAt
 
   @@map("coding_problems")
 }
@@ -99,14 +101,14 @@ model Snippet {
   title       String
   description String?
   language    String
-  tags        String[]
+  tags        String[] @default([])
   sourceCode  String
 
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId String
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // updatedAt DateTime @updatedAt
 
   @@map("snippets")
 }
@@ -131,6 +133,7 @@ model Solution {
   problemId   String
   explanation String
   answers     Answer[]
+  createdAt   DateTime      @default(now())
 
   @@map("solutions")
 }

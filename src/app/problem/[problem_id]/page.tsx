@@ -8,10 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SectionWrapper from '@/hoc/sectionWrapper';
 import { difficultyColors, showToast } from '@/lib';
 
-import { solutions } from '@/lib/solutionsData';
+import { CREATE_SUBMISSION, GET_SOLUTION, GET_SUBMISSION_USER } from '@/lib/services';
 import { Solution, Submission } from '@/lib/types';
 import { useAppDispatch, useAppSelector } from '@/redux/redux-hooks';
 import { addSubmission } from '@/redux/slice/submissionSlice';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { Editor } from '@monaco-editor/react';
 import { AlertCircleIcon, BookOpenIcon, CheckCircleIcon, ChevronDown, ChevronUp, CodeIcon, Copy, Loader2, PlayIcon, SendIcon, TerminalIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -117,24 +118,229 @@ function ProblemInterFace() {
         }
     }, [problem_id]);
 
+    const { data, refetch } = useQuery(GET_SUBMISSION_USER, {
+        variables: {
+            userId: user.id
+        }
+    });
 
+    console.log(submissions);
+    const [getSolution] = useLazyQuery(GET_SOLUTION);
     useEffect(() => {
-        if (!loading && isLoggedIn) {
-            const mysub = submissions.filter(item => (item.problem_id === problem_id && item.user_id === user.id));
-            if (mysub) {
-                mysub.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        if (!loading && isLoggedIn && data?.getAllSubmissionsByUser?.submissions) {
+            const mysub = data.getAllSubmissionsByUser.submissions.filter(
+                (item: Submission) => item.problem.id === problem_id && item.author.id === user.id
+            ).slice(0, 6);
+
+            if (mysub.length > 0) {
+                // dispatch(setSubmissions(mysub))
                 setMysubmission(mysub);
             } else {
-                console.log("Error in Setting Submissions");
+                setMysubmission([]); // Ensure state updates
             }
         }
-
-    }, [submissions])
+    }, [loading, isLoggedIn, data, problem_id, user.id]);
 
     useEffect(() => {
         setCode(defaultCodeTemplates[language] || '');
     }, [language]);
 
+    // const handleRun = async () => {
+
+    //     if (!isLoggedIn) {
+    //         showToast("Login First to Run The Code", "warning");
+    //         return;
+    //     }
+    //     console.log(code);
+    //     setStatus('running');
+    //     setOutput(undefined);
+
+    //     if (!RAPIDAPI_KEY) {
+    //         console.error("NO JUDGE0 API KEY PRESENT");
+    //         setOutput(
+    //             <div className="p-3 bg-red-500/10 border border-red-200 rounded-md">
+    //                 <div className="flex items-center gap-2 mb-2">
+    //                     <AlertCircleIcon className="h-5 w-5 text-red-500" />
+    //                     <span className="font-medium text-red-500">API Key Missing</span>
+    //                 </div>
+    //                 <div className="text-sm text-muted-foreground">
+    //                     <p>Judge0 API key is not configured. Please add it to your environment variables.</p>
+    //                 </div>
+    //             </div>
+    //         );
+    //         setStatus("error");
+    //         return;
+    //     }
+
+    //     try {
+    //         // Only run the first two test cases
+    //         const RunTesCases = testCases.slice(0, 2);
+
+
+    //         const submissions = await Promise.all(
+    //             RunTesCases.map(async (test) => {
+    //                 console.log("TEST", test);
+
+    //                 try {
+    //                     const submissionRes = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=false`, {
+    //                         method: "POST",
+    //                         headers: {
+    //                             "Content-Type": "application/json",
+    //                             "X-RapidAPI-Key": RAPIDAPI_KEY,
+    //                             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+    //                         },
+    //                         body: JSON.stringify({
+    //                             source_code: code,
+    //                             language_id: language,
+    //                             stdin: test.input,
+    //                         }),
+    //                     });
+
+    //                     if (!submissionRes.ok) {
+    //                         throw new Error(`API responded with status: ${submissionRes.status}`);
+    //                     }
+
+    //                     const data = await submissionRes.json();
+    //                     if (!data || !data.token) {
+    //                         throw new Error("Invalid response from Judge0 API");
+    //                     }
+
+    //                     return { token: data.token, input: test.input, expected: test.expectedOutput };
+    //                 } catch (error) {
+    //                     console.error("Submission error:", error);
+    //                     return { error: true, input: test.input, expected: test.expectedOutput };
+    //                 }
+    //             })
+    //         );
+
+    //         // Filter out submissions with errors
+    //         const validSubmissions = submissions.filter(sub => !sub.error);
+
+    //         if (validSubmissions.length === 0) {
+    //             throw new Error("All submissions failed");
+    //         }
+
+    //         const results = await Promise.all(
+    //             validSubmissions.map(async ({ token, input, expected }) => {
+    //                 let resultData;
+    //                 let attempts = 0;
+    //                 const maxAttempts = 5;
+
+    //                 do {
+    //                     try {
+    //                         const resultRes = await fetch(`${JUDGE0_API_URL}/submissions/${token}?base64_encoded=false`, {
+    //                             method: "GET",
+    //                             headers: {
+    //                                 "X-RapidAPI-Key": RAPIDAPI_KEY,
+    //                                 "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+    //                             },
+    //                         });
+
+    //                         if (!resultRes.ok) {
+    //                             throw new Error(`API responded with status: ${resultRes.status}`);
+    //                         }
+
+    //                         resultData = await resultRes.json();
+
+    //                         if (resultData.status && resultData.status.id > 2) break;
+
+    //                         attempts++;
+    //                         if (attempts >= maxAttempts) {
+    //                             throw new Error("Maximum polling attempts reached");
+    //                         }
+
+    //                         await new Promise((res) => setTimeout(res, 1000));
+    //                     } catch (error) {
+    //                         console.error("Error polling for results:", error);
+    //                         resultData = { error: true };
+    //                         break;
+    //                     }
+    //                 } while (true);
+
+    //                 const actualOutput = resultData.error
+    //                     ? "Error: Failed to retrieve results"
+    //                     : resultData.stdout
+    //                         ? resultData.stdout.trim()
+    //                         : resultData.stderr
+    //                             ? `Error: ${resultData.stderr.trim()}`
+    //                             : `Error: ${resultData.compile_output || "Unknown error"}`;
+
+    //                 return { input, expected, actualOutput };
+    //             })
+    //         );
+
+    //         // Update test cases with results
+    //         const updatedTestCases = [...testCases];
+    //         results.forEach((result, i) => {
+    //             if (i < updatedTestCases.length) {
+    //                 updatedTestCases[i] = {
+    //                     ...updatedTestCases[i],
+    //                     actualOutput: result.actualOutput
+    //                 };
+    //             }
+    //         });
+    //         setTestCases(updatedTestCases);
+
+    //         // Create output elements
+    //         const outputElements = (
+    //             <div className="space-y-4">
+    //                 {results.map((r, index) => (
+    //                     <div key={index} className="mb-3 p-3 border rounded-md">
+    //                         <div className="flex items-center justify-between mb-2">
+    //                             <span className="font-medium">Test Case {index + 1}:</span>
+    //                             <Badge
+    //                                 variant={r.actualOutput === r.expected ? "outline" : "outline"}
+    //                                 className={r.actualOutput === r.expected
+    //                                     ? "bg-green-500/10 text-green-500 border-green-200"
+    //                                     : "bg-red-500/10 text-red-500 border-red-200"}
+    //                             >
+    //                                 {r.actualOutput === r.expected ? "Passed" : "Failed"}
+    //                             </Badge>
+    //                         </div>
+    //                         <div className="grid grid-cols-2 gap-2 text-sm">
+    //                             <div>
+    //                                 <div className="text-muted-foreground">Input:</div>
+    //                                 <pre className="bg-muted/50 p-1 rounded mt-1">{r.input.trim()}</pre>
+    //                             </div>
+    //                             <div>
+    //                                 <div className="text-muted-foreground">Expected Output:</div>
+    //                                 <pre className="bg-muted/50 p-1 rounded mt-1">{r.expected}</pre>
+    //                             </div>
+    //                             {r.actualOutput && (
+    //                                 <div className="col-span-2">
+    //                                     <div className="text-muted-foreground">Your Output:</div>
+    //                                     <pre className={`p-1 rounded mt-1 ${r.actualOutput === r.expected
+    //                                         ? "bg-green-500/10"
+    //                                         : "bg-red-500/10"}`}>{r.actualOutput}</pre>
+    //                                 </div>
+    //                             )}
+    //                         </div>
+    //                     </div>
+    //                 ))}
+    //             </div>
+    //         );
+
+    //         setOutput(outputElements);
+    //         setStatus('success');
+
+    //     } catch (error) {
+    //         console.error("Error running code:", error);
+    //         setOutput(
+    //             <div className="p-3 bg-red-500/10 border border-red-200 rounded-md">
+    //                 <div className="flex items-center gap-2 mb-2">
+    //                     <AlertCircleIcon className="h-5 w-5 text-red-500" />
+    //                     <span className="font-medium text-red-500">Execution Error</span>
+    //                 </div>
+    //                 <div className="text-sm text-muted-foreground">
+    //                     <p>There was an error executing your code. Please try again later.</p>
+    //                     <pre className="mt-2 p-2 bg-muted rounded-md">{error instanceof Error ? error.message : "Unknown error"}</pre>
+    //                 </div>
+    //             </div>
+    //         );
+    //         setStatus('error');
+    //     }
+    // };
+    const [createSubmission] = useMutation(CREATE_SUBMISSION);
     const handleRun = async () => {
 
         if (!isLoggedIn) {
@@ -330,8 +536,7 @@ function ProblemInterFace() {
             setStatus('error');
         }
     };
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!isLoggedIn) {
             showToast("Login First to Submit The Code", "warning");
             return;
@@ -339,9 +544,9 @@ function ProblemInterFace() {
         setStatus('running');
 
         // Simulate code submission with all test cases
-        setTimeout(() => {
+        setTimeout(async () => {
             // For demonstration, show all test cases passed
-            const allPassed = false;
+            const allPassed = true;
 
             const successOutput = (
                 <div className="p-3 bg-green-500/10 border border-green-200 rounded-md">
@@ -366,37 +571,87 @@ function ProblemInterFace() {
             setOutput(allPassed ? successOutput : failureOutput);
 
             if (isLoggedIn && problem) {
-
-                const submissionNew = {
-                    id: crypto.randomUUID(),
-                    problem_id: problem.id,
-                    user_id: user.id,
-                    language: languages.find(item => item.id === language)?.name || "C++",
-                    submittedCode: code,
-                    createdAt: new Date(Date.now()),
-                    status: allPassed,
+                try {
+                    const res = await createSubmission({
+                        variables: {
+                            input: {
+                                problemId: problem_id as string,
+                                language: languages.find(item => item.id === language)?.name || "C++",
+                                status: allPassed ? true : false,
+                                submittedCode: code,
+                            }
+                        }
+                    })
+                    if (res.data.createSubmission.success) {
+                        const obj = res.data.createSubmission.submission;
+                        const submissionNew = {
+                            id: obj.id,
+                            problem: {
+                                id: problem_id as string,
+                            },
+                            author: {
+                                id: user.id,
+                            },
+                            language: languages.find(item => item.id === language)?.name || "C++",
+                            submittedCode: code,
+                            status: allPassed,
+                        }
+                        dispatch(addSubmission(submissionNew));
+                        showToast(res.data.createSubmission.message, "success");
+                    } else {
+                        console.log("Unable to submit code>>");
+                    }
+                } catch (error) {
+                    console.error(error);
                 }
-                dispatch(addSubmission(submissionNew));
             }
 
             setStatus('success');
         }, 2000);
+
+        refetch();
     };
 
     if (!problem) {
         return <div>No problem found ..</div>
     }
 
-    const handleGetSolution = () => {
+    const handleGetSolution = async () => {
         setGenerating(true);
-        const findSolution = solutions.find(item => item.problem_id === problem_id);
-        if (findSolution) {
-            setSolution(findSolution);
-        } else {
-            // generate a ai call which 
-            console.log("solution no found");
+        try {
+            const res = await getSolution({
+                variables: {
+                    problemId: problem_id as string,
+                }
+            })
+            if (res.data.getSolution.success) {
+                const resSolution = res.data.getSolution.solution;
+
+                const fetchedSolution = {
+                    problem: {
+                        id: problem_id as string,
+                    },
+                    id: resSolution?.id || "",
+                    explanation: resSolution?.explanation,
+                    answer: resSolution?.answers ?? [],
+                };
+
+                setSolution(fetchedSolution);
+            } else {
+                console.log("Solution Cannot Be Fetched");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+
+            setGenerating(false);
         }
-        setGenerating(false);
+        // if (findSolution) {
+        //     setSolution(findSolution);
+        // } else {
+        //     // generate a ai call which 
+        //     console.log("solution no found");
+        // }
     }
     return (
         <SectionWrapper>
@@ -515,7 +770,7 @@ function ProblemInterFace() {
                                                         </div>
                                                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                                             <span>{submission.language}</span>
-                                                            <span>{new Date(submission.createdAt).toISOString().split("T")[0]}</span>
+                                                            {/* <span>{new Date(submission.createdAt).toISOString().split("T")[0]}</span> */}
                                                             <button onClick={() => setCode(submission.submittedCode)} >view</button>
                                                         </div>
                                                     </div>
@@ -534,10 +789,10 @@ function ProblemInterFace() {
                                                 {solution && (
                                                     <div className="p-4 border rounded-lg bg-gray-100 dark:bg-gray-800">
                                                         <div>
-                                                            {solution.explanation}
+                                                            {solution?.explanation}
                                                         </div>
                                                         <div className='flex flex-col gap-2 overflow-scroll h-[50vh]'>
-                                                            {solution.answer.map((item) => (
+                                                            {solution?.answer?.map((item) => (
                                                                 <div key={item.language} className="border rounded-lg overflow-scroll">
                                                                     <button
                                                                         onClick={() => toggleCollapse(item.language)}

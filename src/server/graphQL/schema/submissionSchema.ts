@@ -25,7 +25,6 @@ input createSubmissionInput {
    language : String!,
    status : Boolean!,
    submittedCode : String!,
-   createdAt : String!,
 }
 type createSubmissionResponse {
     success : Boolean!,

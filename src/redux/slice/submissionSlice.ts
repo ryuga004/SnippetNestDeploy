@@ -1,5 +1,6 @@
 
 
+import { removeTypename } from '@/lib';
 import { Submission } from '@/lib/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -16,17 +17,17 @@ const initialState: Submissionstate = {
     error: null,
 };
 
-
 const submissionSlice = createSlice({
     name: 'submission',
     initialState,
     reducers: {
         setSubmissions: (state, action: PayloadAction<Submission[]>) => {
-            // loades my submissions for particular problem or total depend on need 
-            state.submissions = action.payload;
+            state.submissions = action.payload.map(removeTypename);
         },
         addSubmission: (state, action: PayloadAction<Submission>) => {
-            state.submissions.push(action.payload);
+            state.submissions.push(
+                action.payload
+            );
         },
         setLoadingSubmission: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
