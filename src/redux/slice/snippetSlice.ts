@@ -1,6 +1,8 @@
 import { removeTypename } from '@/lib';
+import client from '@/lib/ApolloClient';
+import { GET_ALL_SNIPPETS_ADMIN } from '@/lib/services';
 import { Snippet } from '@/lib/types';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 
 interface SnippetState {
@@ -15,6 +17,30 @@ const initialState: SnippetState = {
     error: null,
 };
 
+export const fetchSnippets = createAsyncThunk(
+    "snippets/fetchSnippets",
+    async (_, { rejectWithValue }) => {
+        try {
+            console.log("Fetching snippets...");
+
+            const { data } = await client.query({
+                query: GET_ALL_SNIPPETS_ADMIN,
+                fetchPolicy: "no-cache",
+            });
+
+            console.log("Response Data:", data);
+
+            if (!data.getAllSnippets.success) {
+                return rejectWithValue(data.getAllSnippets.message || "Failed to fetch snippets");
+            }
+
+            return data.getAllSnippets.snippets;
+        } catch (error) {
+            console.error("Error fetching snippets:", error);
+            return rejectWithValue("Error fetching snippets");
+        }
+    }
+);
 
 const snippetSlice = createSlice({
     name: 'snippet',
@@ -46,6 +72,22 @@ const snippetSlice = createSlice({
         setError: (state, action: PayloadAction<string | null>) => {
             state.error = action.payload;
         },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchSnippets.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchSnippets.fulfilled, (state, action) => {
+                state.loading = false;
+                console.log("SDLFNOSNGS", action.payload);
+                state.snippets = action.payload.map(removeTypename);
+            })
+            .addCase(fetchSnippets.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
     },
 });
 

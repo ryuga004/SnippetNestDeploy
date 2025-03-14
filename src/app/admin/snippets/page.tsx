@@ -5,26 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import SectionWrapper from '@/hoc/sectionWrapper';
 import { showToast } from '@/lib'; // Assume you have a toast notification system
-import { DELETE_SNIPPET, GET_ALL_SNIPPETS_ADMIN } from '@/lib/services';
+import { DELETE_SNIPPET } from '@/lib/services';
 import { Snippet } from '@/lib/types';
-import { useAppDispatch } from '@/redux/redux-hooks';
-import { setSnippets } from '@/redux/slice/snippetSlice';
-import { useMutation, useQuery } from '@apollo/client';
+import { useAppSelector } from '@/redux/redux-hooks';
+import { useMutation } from '@apollo/client';
 import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
 
 const SnippetAdminPage = () => {
     const [deleteSnippet] = useMutation(DELETE_SNIPPET, {
         refetchQueries: ["GetAllSnippets"],
     });
-    const dispatch = useAppDispatch();
-    const { data, loading } = useQuery(GET_ALL_SNIPPETS_ADMIN);
-    useEffect(() => {
-        if (!loading && data.getAllSnippets.snippets) {
-            dispatch(setSnippets(data.getAllSnippets.snippets));
-        }
-    }, [data]);
+    const { snippets, loading } = useAppSelector(state => state.snippets);
     const handleDelete = async (id: string) => {
         try {
             await deleteSnippet({ variables: { deleteSnippetId: id } }).then(() => {
@@ -60,7 +52,7 @@ const SnippetAdminPage = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.getAllSnippets.snippets.map((snippet: Snippet) => (
+                            {snippets.map((snippet: Snippet) => (
                                 <TableRow key={snippet.id}>
                                     <TableCell className="font-medium">
                                         <Link className='hover:text-blue-500' href={`/snippet/${snippet?.id}`}>{snippet.title}</Link>

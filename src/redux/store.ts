@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit'
-import snippetReducer from '@/redux/slice/snippetSlice'
-import userReducer from '@/redux/slice/userSlice'
 import problemReducer from '@/redux/slice/problemSlice'
+import snippetReducer from '@/redux/slice/snippetSlice'
 import submissionReducer from '@/redux/slice/submissionSlice'
+import userReducer from '@/redux/slice/userSlice'
+import { configureStore } from '@reduxjs/toolkit'
 export const makeStore = () => {
     return configureStore({
         reducer: {
@@ -13,6 +13,8 @@ export const makeStore = () => {
         },
     })
 }
+
+
 
 
 export type AppStore = ReturnType<typeof makeStore>

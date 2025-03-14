@@ -15,7 +15,7 @@ import { addSubmission } from '@/redux/slice/submissionSlice';
 import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
 import { Editor } from '@monaco-editor/react';
 import { AlertCircleIcon, BookOpenIcon, CheckCircleIcon, ChevronDown, ChevronUp, CodeIcon, Copy, Loader2, PlayIcon, SendIcon, TerminalIcon } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { JSX, useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import './styles.css';
@@ -87,7 +87,7 @@ function ProblemInterFace() {
     const [language, setLanguage] = useState(languages[0].id);
     const [code, setCode] = useState(defaultCodeTemplates[languages[0].id]);
     const [output, setOutput] = useState<JSX.Element | string | undefined>(undefined);
-    const { submissions, loading } = useAppSelector(state => state.submissions);
+    // const { submissions, loading } = useAppSelector(state => state.submissions);
     const { user, isLoggedIn } = useAppSelector(state => state.user);
     const [testCases, setTestCases] = useState<TestCaseType[]>([]);
     const [status, setStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle');
@@ -95,7 +95,7 @@ function ProblemInterFace() {
     const { problem_id } = useParams();
     const [solution, setSolution] = useState<Solution>();
     const [generating, setGenerating] = useState<boolean>(false);
-    const router = useRouter();
+
     const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
     const { problems } = useAppSelector(state => state.problems);
     const toggleCollapse = (language: string) => {
@@ -113,10 +113,10 @@ function ProblemInterFace() {
             setTestCases(foundProblem.testCases)
         } else {
 
-            alert("Problem Not Found. Returning to Home.");
-            router.push("/");
+            console.log("Problem Not Found. Returning to Home.");
+
         }
-    }, [problem_id]);
+    }, [problem_id, problems]);
 
     const { data, refetch } = useQuery(GET_SUBMISSION_USER, {
         variables: {
@@ -124,22 +124,20 @@ function ProblemInterFace() {
         }
     });
 
-    console.log(submissions);
+    // console.log(submissions);
     const [getSolution] = useLazyQuery(GET_SOLUTION);
     useEffect(() => {
-        if (!loading && isLoggedIn && data?.getAllSubmissionsByUser?.submissions) {
+        if (isLoggedIn && data?.getAllSubmissionsByUser?.submissions) {
             const mysub = data.getAllSubmissionsByUser.submissions.filter(
                 (item: Submission) => item.problem.id === problem_id && item.author.id === user.id
             ).slice(0, 6);
-
             if (mysub.length > 0) {
-                // dispatch(setSubmissions(mysub))
                 setMysubmission(mysub);
             } else {
-                setMysubmission([]); // Ensure state updates
+                setMysubmission([]);
             }
         }
-    }, [loading, isLoggedIn, data, problem_id, user.id]);
+    }, [isLoggedIn, data, problem_id, user.id]);
 
     useEffect(() => {
         setCode(defaultCodeTemplates[language] || '');
@@ -347,7 +345,7 @@ function ProblemInterFace() {
             showToast("Login First to Run The Code", "warning");
             return;
         }
-        console.log(code);
+
         setStatus('running');
         setOutput(undefined);
 
@@ -369,7 +367,7 @@ function ProblemInterFace() {
         }
 
         try {
-            // Only run the first two test cases
+
             const RunTesCases = testCases.slice(0, 2);
 
 
@@ -541,75 +539,197 @@ function ProblemInterFace() {
             showToast("Login First to Submit The Code", "warning");
             return;
         }
+        let allPassed = true;
         setStatus('running');
 
-        // Simulate code submission with all test cases
-        setTimeout(async () => {
-            // For demonstration, show all test cases passed
-            const allPassed = true;
-
-            const successOutput = (
-                <div className="p-3 bg-green-500/10 border border-green-200 rounded-md">
-                    <div className="flex items-center gap-2 mb-2">
-                        <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                        <span className="font-medium text-green-500">All Test Cases Passed!</span>
-                    </div>
-                </div>
-            );
-
-            const failureOutput = (
+        if (!RAPIDAPI_KEY) {
+            setOutput(
                 <div className="p-3 bg-red-500/10 border border-red-200 rounded-md">
                     <div className="flex items-center gap-2 mb-2">
                         <AlertCircleIcon className="h-5 w-5 text-red-500" />
-                        <span className="font-medium text-red-500">Some Test Cases Failed</span>
+                        <span className="font-medium text-red-500">API Key Missing</span>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                        <p>Please check your solution and try again.</p>
+                        <p>Judge0 API key is not configured. Please add it to your environment variables.</p>
                     </div>
                 </div>
             );
-            setOutput(allPassed ? successOutput : failureOutput);
+            setStatus("error");
+            return;
+        }
 
-            if (isLoggedIn && problem) {
+
+
+
+        const RunTesCases = testCases;
+
+
+        const submissions = await Promise.all(
+            RunTesCases.map(async (test) => {
+                console.log("TEST", test);
+
                 try {
-                    const res = await createSubmission({
-                        variables: {
-                            input: {
-                                problemId: problem_id as string,
-                                language: languages.find(item => item.id === language)?.name || "C++",
-                                status: allPassed ? true : false,
-                                submittedCode: code,
-                            }
-                        }
-                    })
-                    if (res.data.createSubmission.success) {
-                        const obj = res.data.createSubmission.submission;
-                        const submissionNew = {
-                            id: obj.id,
-                            problem: {
-                                id: problem_id as string,
-                            },
-                            author: {
-                                id: user.id,
-                            },
-                            language: languages.find(item => item.id === language)?.name || "C++",
-                            submittedCode: code,
-                            status: allPassed,
-                        }
-                        dispatch(addSubmission(submissionNew));
-                        showToast(res.data.createSubmission.message, "success");
-                    } else {
-                        console.log("Unable to submit code>>");
+                    const submissionRes = await fetch(`${JUDGE0_API_URL}/submissions?base64_encoded=false`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-RapidAPI-Key": RAPIDAPI_KEY,
+                            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+                        },
+                        body: JSON.stringify({
+                            source_code: code,
+                            language_id: language,
+                            stdin: test.input,
+                        }),
+                    });
+
+                    if (!submissionRes.ok) {
+                        throw new Error(`API responded with status: ${submissionRes.status}`);
                     }
+
+                    const data = await submissionRes.json();
+                    if (!data || !data.token) {
+                        throw new Error("Invalid response from Judge0 API");
+                    }
+
+                    return { token: data.token, input: test.input, expected: test.expectedOutput };
                 } catch (error) {
-                    console.error(error);
+                    console.error("Submission error:", error);
+                    return { error: true, input: test.input, expected: test.expectedOutput };
                 }
+            })
+        );
+
+
+        const validSubmissions = submissions.filter(sub => !sub.error);
+
+        if (validSubmissions.length === 0) {
+            throw new Error("All submissions failed");
+        }
+
+        const results = await Promise.all(
+            validSubmissions.map(async ({ token, input, expected }) => {
+                let resultData;
+                let attempts = 0;
+                const maxAttempts = 5;
+
+                do {
+                    try {
+                        const resultRes = await fetch(`${JUDGE0_API_URL}/submissions/${token}?base64_encoded=false`, {
+                            method: "GET",
+                            headers: {
+                                "X-RapidAPI-Key": RAPIDAPI_KEY,
+                                "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+                            },
+                        });
+
+                        if (!resultRes.ok) {
+                            throw new Error(`API responded with status: ${resultRes.status}`);
+                        }
+
+                        resultData = await resultRes.json();
+
+                        if (resultData.status && resultData.status.id > 2) break;
+
+                        attempts++;
+                        if (attempts >= maxAttempts) {
+                            throw new Error("Maximum polling attempts reached");
+                        }
+
+                        await new Promise((res) => setTimeout(res, 1000));
+                    } catch (error) {
+                        console.error("Error polling for results:", error);
+                        resultData = { error: true };
+                        break;
+                    }
+                } while (true);
+
+                const actualOutput = resultData.error
+                    ? "Error: Failed to retrieve results"
+                    : resultData.stdout
+                        ? resultData.stdout.trim()
+                        : resultData.stderr
+                            ? `Error: ${resultData.stderr.trim()}`
+                            : `Error: ${resultData.compile_output || "Unknown error"}`;
+
+                return { input, expected, actualOutput };
+            })
+        );
+
+
+        results.forEach((res) => {
+            if (res.expected !== res.actualOutput) {
+                allPassed = false;
             }
+            // console.log(res);
+        })
 
-            setStatus('success');
-        }, 2000);
 
-        refetch();
+        // ending running all test cases
+
+
+
+
+        const successOutput = (
+            <div className="p-3 bg-green-500/10 border border-green-200 rounded-md">
+                <div className="flex items-center gap-2 mb-2">
+                    <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                    <span className="font-medium text-green-500">All Test Cases Passed!</span>
+                </div>
+            </div>
+        );
+
+        const failureOutput = (
+            <div className="p-3 bg-red-500/10 border border-red-200 rounded-md">
+                <div className="flex items-center gap-2 mb-2">
+                    <AlertCircleIcon className="h-5 w-5 text-red-500" />
+                    <span className="font-medium text-red-500">Some Test Cases Failed</span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                    <p>Please check your solution and try again.</p>
+                </div>
+            </div>
+        );
+        setOutput(allPassed ? successOutput : failureOutput);
+
+        if (isLoggedIn && problem) {
+            try {
+                const res = await createSubmission({
+                    variables: {
+                        input: {
+                            problemId: problem_id as string,
+                            language: languages.find(item => item.id === language)?.name || "C++",
+                            status: allPassed ? true : false,
+                            submittedCode: code,
+                        }
+                    }
+                })
+                if (res.data.createSubmission.success) {
+                    const obj = res.data.createSubmission.submission;
+                    const submissionNew = {
+                        id: obj.id,
+                        problem: {
+                            id: problem_id as string,
+                        },
+                        author: {
+                            id: user.id,
+                        },
+                        language: languages.find(item => item.id === language)?.name || "C++",
+                        submittedCode: code,
+                        status: allPassed,
+                    }
+                    dispatch(addSubmission(submissionNew));
+                    showToast(res.data.createSubmission.message, "success");
+                } else {
+                    console.log("Unable to submit code>>");
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                refetch();
+            }
+        }
+        setStatus('success');
     };
 
     if (!problem) {

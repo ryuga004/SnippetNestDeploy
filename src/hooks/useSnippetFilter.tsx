@@ -36,7 +36,7 @@ export default function useSnippetFilters(snippets: Snippet[]) {
             [key]: value,
         }));
     };
-    // ✅ Filtering logic
+
     const filteredSnippets = snippets
         .filter((snippet) => {
             return (
@@ -50,7 +50,7 @@ export default function useSnippetFilters(snippets: Snippet[]) {
         })
         .sort((a, b) => {
             if (filters.sortBy === "newest") {
-                return b.id.localeCompare(a.id); // Assuming `id` is ordered
+                return b.id.localeCompare(a.id);
             } else if (filters.sortBy === "oldest") {
                 return a.id.localeCompare(b.id);
             }

@@ -37,7 +37,7 @@ export default function RootLayout({
         <ApolloProviderWrapper>
           <StoreProvider>
             <Navbar />
-            <main className="py-16">
+            <main className="py-16  min-h-screen">
 
               <Toaster richColors position="top-center" />
               {children}

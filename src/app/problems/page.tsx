@@ -1,25 +1,11 @@
 "use client";
 import { ProblemsTable } from "@/components/Tables/problemTable";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { GET_ALL_PROGLEM } from "@/lib/services";
-import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
-import { setproblems } from "@/redux/slice/problemSlice";
-import { useQuery } from "@apollo/client";
-import { useEffect } from "react";
+import { useAppSelector } from "@/redux/redux-hooks";
 
 export default function ProblemsPage() {
 
     const { problems, loading, error } = useAppSelector(state => state.problems);
-
-    const { data } = useQuery(GET_ALL_PROGLEM);
-    const dispatch = useAppDispatch();
-
-
-    useEffect(() => {
-        if (data?.getAllCodingProblems.success)
-            dispatch(setproblems(data.getAllCodingProblems.problems));
-    }, [data, loading])
-
 
     if (loading) {
         return <div className="text-center text-lg font-semibold">Loading...</div>;
