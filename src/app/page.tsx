@@ -12,9 +12,9 @@ const Home = () => {
 
   return (
     <div>
-      <SectionWrapper>
-        <Hero />
-      </SectionWrapper>
+      {/* <SectionWrapper> */}
+      <Hero />
+      {/* </SectionWrapper> */}
       <SectionWrapper>
         <FeaturedSnippets />
 

@@ -57,10 +57,13 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
                     const user = response.data.registerUser.user;
                     dispatch(
                         setUser({
-                            id: user.id,
-                            username: user.username,
-                            email: user.email,
-                            avatar: user?.avatar || "/user_logo.png",
+                            user: {
+                                id: user.id,
+                                username: user.username,
+                                email: user.email,
+                                avatar: user?.avatar || "/user_logo.png",
+                            },
+                            isAdmin: user.role === 'ADMIN',
                         })
                     );
                 } else {
@@ -86,10 +89,13 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
                             const user = data.GetMe.user;
                             dispatch(
                                 setUser({
-                                    id: user.id,
-                                    username: user.username,
-                                    email: user.email,
-                                    avatar: user?.avatar || "/user_logo.png",
+                                    user: {
+                                        id: user.id,
+                                        username: user.username,
+                                        email: user.email,
+                                        avatar: user?.avatar || "/user_logo.png",
+                                    },
+                                    isAdmin: user?.role === 'ADMIN',
                                 })
                             );
                         } else {

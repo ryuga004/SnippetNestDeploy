@@ -6,7 +6,7 @@ import { LOGOUT_USER } from "@/lib/services";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeUser } from "@/redux/slice/userSlice";
 import { useMutation } from "@apollo/client";
-import { Code, FileText, Home, LayoutDashboard, List, Menu, Sparkles, UserCog, Users, X } from "lucide-react";
+import { ChevronDown, Clipboard, Code, FileText, Home, LayoutDashboard, List, LogOutIcon, Menu, Sparkles, UserCircleIcon, UserCog, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -14,7 +14,7 @@ import CreateSnippetForm from "./Forms/createSnippet";
 import LoginRegister from "./Forms/login";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 const Navbar = () => {
     const [openModal, setOpenModal] = useState(false);
@@ -61,22 +61,29 @@ const Navbar = () => {
         }
     };
     const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
+    // const hideBackButton = pathname === "/" || window.history.length <= 1;
     return (
         <>
-            {/* Navbar */}
-            <nav className={`${scrolled ? "bg-transparent" : "bg-gray-900 shadow-md"} fixed w-full  px-8 py-4 top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50`}>
-                {/* Logo */}
-                <Link
-                    href="/"
-                    className={`${scrolled ? "text-red-800" : "text-white"
-                        } text-xl flex items-center gap-3 font-bold`}
-                >
-                    <Avatar className="cursor-pointer">
-                        <AvatarImage src="/logo.png" alt="Logo" />
-                        <AvatarFallback>S</AvatarFallback>
-                    </Avatar>
-                    <span>SnippetNest</span>
-                </Link>
+            <nav className={`${scrolled ? "bg-transparent" : "bg-gray-900 shadow-md"} absolute w-full  px-8 py-4 top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50`}>
+                <div className="flex flex-center">
+                    {/* {!hideBackButton && (
+                        // <Button variant="default" className="flex absolute left-0 items-center gap-2" onClick={() => router.back()}>
+                        //     <ArrowLeft className="w-5 h-5" />
+
+                        // </Button>)} */}
+                    <Link
+                        href="/"
+                        className={`${scrolled ? "text-red-800" : "text-white"
+                            } text-xl flex items-center gap-3 font-bold`}
+                    >
+
+                        <Avatar className="cursor-pointer">
+                            <AvatarImage src="/logo.png" alt="Logo" />
+                            <AvatarFallback>S</AvatarFallback>
+                        </Avatar>
+                        <span>SnippetNest</span>
+                    </Link>
+                </div>
                 {isAdmin && (
                     <Button
                         onClick={() => {
@@ -89,7 +96,6 @@ const Navbar = () => {
                         < UserCog size={70} className="text-white bg-blue-500 rounded-md " />
                     </Button>
                 )}
-                {/* Desktop Links */}
                 <div className="hidden md:flex gap-6">
 
                     {
@@ -131,35 +137,44 @@ const Navbar = () => {
                     }
 
 
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Avatar className={`${scrolled ? "bg-red-400" : "bg-white"} cursor-pointer`}>
-                                <AvatarImage src={isLoggedIn ? user.avatar : "/user_logo.png"} alt="User Avatar" />
-                                <AvatarFallback>{user.username?.charAt(0) || "U"}</AvatarFallback>
-                            </Avatar>
-                        </PopoverTrigger>
+                    <div>
+                        {isLoggedIn ? (
+                            <HoverCard>
+                                <HoverCardTrigger asChild>
+                                    <div className="flex justify-center align-center gap-1 ">
+                                        <Avatar className={`${scrolled ? "bg-gray-400" : "bg-white"} cursor-pointer`}>
+                                            <AvatarImage src={isLoggedIn ? user.avatar : "/user_logo.png"} alt="User Avatar" />
+                                            <AvatarFallback>{user.username?.charAt(0) || "S"}</AvatarFallback>
+                                        </Avatar>
+                                        <ChevronDown className="m-auto" size={15} color="gray" />
+                                    </div>
+                                </HoverCardTrigger>
 
-                        <PopoverContent align="end" className="w-48 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
-                            {isLoggedIn ? (
-                                <>
-                                    <p className="font-semibold px-4 py-2">{user.username}</p>
-                                    <button onClick={() => setOpenModal(true)} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">Create Snippet</button>
-                                    <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md">Logout</button>
-                                </>
-                            ) : (
-                                <button onClick={() => setOpenLoginModal(true)} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">Login</button>
-                            )}
-                        </PopoverContent>
-                    </Popover>
+                                <HoverCardContent align="end" className="w-48 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
+                                    <>
+                                        <button onClick={() => router.push(`/profile/${user.id}`)} className="w-full   flex gap-2 flex-center  text-left px-4 py-2  hover:bg-gray-700 rounded-md"> <UserCircleIcon />  {user.username}</button>
+                                        <button onClick={() => setOpenModal(true)} className="w-full  flex gap-2 flex-center text-left px-4 py-2 hover:bg-gray-700 rounded-md">
+                                            <Clipboard /> Create Snippet
+                                        </button>
+                                        <button onClick={handleLogout} className="w-full   flex gap-2 flex-center  text-left px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md">
+                                            <LogOutIcon />  Logout
+                                        </button>
+                                    </>
+                                </HoverCardContent>
+                            </HoverCard>
+                        ) : (
+                            <Button variant="default" onClick={() => setOpenLoginModal(true)} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">
+                                Login
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
-                {/* Mobile Menu Button */}
                 <button className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
                     {menuOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
             </nav>
 
-            {/* Mobile Menu */}
             {menuOpen && (
                 <div ref={menuRef} className="z-20 absolute top-16 left-0 w-full bg-gray-900 p-4 flex flex-col items-center gap-4 md:hidden">
                     <NavLink href="/" pathname={pathname} onClick={() => setMenuOpen(false)}>Home</NavLink>
@@ -170,8 +185,6 @@ const Navbar = () => {
                     <Button onClick={() => { setOpenModal(true); setMenuOpen(false); }}>Create Snippet</Button>
                 </div>
             )}
-
-            {/* Modal */}
 
             {openModal && <CenterModalWrapper handleClose={() => setOpenModal(false)} >
                 <CreateSnippetForm handleClose={() => setOpenModal(false)} />

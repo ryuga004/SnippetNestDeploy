@@ -32,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-200`}>
+    <html lang="en" className="overflow-y-auto hide-scrollbar">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased  min-h-screen bg-gray-200`}>
         <ApolloProviderWrapper> {/* Apollo in a client wrapper */}
           <StoreProvider>
             <Navbar />

@@ -63,7 +63,7 @@ const StatCard = ({ title, value, icon: Icon, trend, percentage }: StatCardProps
     </div>
 );
 
-export default function AdminDashboard() {
+function AdminDashboard() {
     const { data, loading, error } = useQuery(GET_DASHBOARD_DATA);
 
     if (loading) return <div>Loading...</div>;
@@ -206,3 +206,4 @@ export default function AdminDashboard() {
         </SectionWrapper>
     );
 }
+export default AdminDashboard;

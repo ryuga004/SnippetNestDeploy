@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 const images = [
     "https://images.unsplash.com/photo-1536148935331-408321065b18?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -27,9 +28,9 @@ const Hero = () => {
         }, 4000);
         return () => clearInterval(interval);
     }, []);
-
+    const router = useRouter();
     return (
-        <div className="relative w-full h-[85vh] bg-black overflow-hidden">
+        <div className="relative w-full h-[92vh] bg-black overflow-hidden">
             {/* Image Slider with Smooth Transitions */}
             <AnimatePresence mode="wait">
                 <motion.img
@@ -61,8 +62,8 @@ const Hero = () => {
                 </motion.h1>
                 <p className="text-lg mt-4 text-gray-300">Run, debug, and collaborate on your code in real time.</p>
                 <div className="mt-6 flex gap-4">
-                    <Button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg">Start Coding</Button>
-                    <Button className="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg">Explore Templates</Button>
+                    <Button onClick={() => router.push("/problems")} className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg">Start Coding</Button>
+                    <Button onClick={() => router.push("/snippets")} className="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg">Explore Snippets</Button>
                 </div>
             </motion.div>
 

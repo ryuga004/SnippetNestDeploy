@@ -20,7 +20,7 @@ const initialState: UserState = {
     loading: false,
     error: null,
     isLoggedIn: false,
-    isAdmin: true,
+    isAdmin: false,
 };
 
 
@@ -29,10 +29,13 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setUser: (state, action: PayloadAction<User>) => {
-            state.user = action.payload;
+        setUser: (state, action: PayloadAction<{
+            user: User,
+            isAdmin: boolean,
+        }>) => {
+            state.user = action.payload.user;
             state.isLoggedIn = state.user.id !== "";
-            state.isAdmin = state.user.id !== "";
+            state.isAdmin = action.payload.isAdmin;
         },
         removeUser: (state) => {
             state.user = initialState.user;

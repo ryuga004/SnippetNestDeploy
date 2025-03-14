@@ -41,7 +41,8 @@ export const GET_ME = gql`
       id ,
       username,
       avatar,
-      email
+      email,
+      role
     }
   }
 }
@@ -240,7 +241,7 @@ query GetSolution($problemId: ID!) {
   }
 }
 `
-
+// ** ADMIN ** //
 export const GET_DASHBOARD_DATA = gql`
 query GetDashboardData {
   getDashboardData {

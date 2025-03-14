@@ -13,6 +13,7 @@ export const userTypeDefs = `#graphql
     achievements: [Achievement!]!
     createdAt: String!
     updatedAt: String!
+    role: String!
   }
 
   type Social {
