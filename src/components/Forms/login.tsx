@@ -116,11 +116,11 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
     };
 
     return (
-        <div className="flex flex-col md:flex-row bg-gray-100 h-[70vh] w-[70vw]">
+        <div className="flex  bg-gray-100 h-[75vh] w-[50vw]">
 
-            <aside className="hidden  lg:flex  ">
+            <aside className="hidden  lg:flex w-[25vw] ">
                 <Image
-                    className="w-full h-full object-cover rounded-l-xl"
+                    className="w-full h-full object-fill "
                     src="https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?q=80&w=2070&auto=format&fit=crop"
                     alt="Login Illustration"
                     width={300}
@@ -129,12 +129,13 @@ export default function LoginRegister({ handleClose }: { handleClose: () => void
             </aside>
 
             {/* Form Container */}
-            <main className="flex flex-col justify-center items-center w-full md:w-1/2 p-8 bg-white shadow-lg rounded-xl">
-                <h2 className="text-2xl font-bold mb-6 text-gray-800">
-                    {isRegister ? "Register" : "Login"}
+            <main className="flex flex-col justify-start items-center w-full md:w-1/2 p-8 bg-white shadow-lg ">
+                <h2 className="text-2xl w-full text-center  font-bold mb-6 text-gray-800">
+                    <p className="pb-2">{isRegister ? "Create an account" : "Sign In"}</p>
+                    <hr />
                 </h2>
 
-                <form className="w-1/2 max-w-sm space-y-4" onSubmit={handleSubmit}>
+                <form className="w-full max-w-sm space-y-4" onSubmit={handleSubmit}>
                     {/* Avatar Upload & Preview */}
                     {isRegister && (
                         <div className="flex flex-col items-center">

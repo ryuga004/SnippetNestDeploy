@@ -1,6 +1,7 @@
 import { useClickOutside } from "@/hooks/onClickOutside";
 import { useCloseOnEscape } from "@/hooks/onEscapeClose";
 import { useCloseOnScroll } from "@/hooks/onScrollClose";
+import { X } from "lucide-react";
 import { ReactNode, useRef } from "react";
 
 interface ModalProps {
@@ -18,13 +19,13 @@ function CenterModalWrapper({ handleClose, className, children }: ModalProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div ref={modalRef}
-                className={`relative w-[max-content] h-[max-content]  bg-white p-6 shadow-xl rounded-lg ${className}`}
+                className={`relative w-[max-content] h-[max-content]  bg-white  shadow-xl rounded-md ${className}`}
             >
                 <button
                     onClick={handleClose}
-                    className="absolute right-4 top-4 p-2 text-gray-500 hover:text-gray-800"
+                    className="absolute right-2 top-2 p-2 "
                 >
-                    &times;
+                    <X color="black" />
                 </button>
                 {children}
             </div>

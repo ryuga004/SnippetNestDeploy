@@ -97,59 +97,64 @@ export default function CreateSnippetForm({ handleClose }: { handleClose: () => 
     };
 
     return (
-        <Card className="w-full mx-auto  p-6 shadow-lg">
-            <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <Input placeholder="Title" {...register("title", { required: true })} />
+        <Card className="w-[70vw] h-[75vh] py-3  shadow-lg">
+            <CardContent className="h-full ">
+                <h1 className="pb-1">Create Snippet</h1>
+                <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full grid grid-cols-5 gap-3">
+                    <main className="flex flex-col gap-3 col-span-2">
+                        <Input placeholder="Title" {...register("title", { required: true })} />
 
-                    <Textarea placeholder="Description" {...register("description", { required: true })} />
+                        <Textarea className="flex-1" placeholder="Description" {...register("description", { required: true })} />
 
-                    {/* Language Selection */}
-                    <Controller
-                        control={control}
-                        name="language"
-                        render={({ field }) => (
-                            <Select onValueChange={field.onChange}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {languages.map((lang) => (
-                                        <SelectItem key={lang} value={lang}>
-                                            {lang}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
-
-                    {/* Tags Input */}
-                    <div className="flex items-center gap-2">
-                        <Input
-                            placeholder="Enter tags"
-                            value={tagInput}
-                            onChange={(e) => setTagInput(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                        {/* Language Selection */}
+                        <Controller
+                            control={control}
+                            name="language"
+                            render={({ field }) => (
+                                <Select onValueChange={field.onChange}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Language" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {languages.map((lang) => (
+                                            <SelectItem key={lang} value={lang}>
+                                                {lang}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
                         />
-                        <Button type="button" onClick={addTag}>
-                            Add
+
+                        {/* Tags Input */}
+                        <div className="flex items-center gap-2">
+                            <Input
+                                placeholder="Enter tags"
+                                value={tagInput}
+                                onChange={(e) => setTagInput(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                            />
+                            <Button type="button" onClick={addTag}>
+                                Add
+                            </Button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {tags.map((tag) => (
+                                <Badge key={tag} className="flex items-center gap-2">
+                                    {tag} <X size={14} onClick={() => removeTag(tag)} className="cursor-pointer" />
+                                </Badge>
+                            ))}
+                        </div>
+
+                        <Button type="submit" className="w-full bg-red-500 text-white">
+                            Create Snippet
                         </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <Badge key={tag} className="flex items-center gap-2">
-                                {tag} <X size={14} onClick={() => removeTag(tag)} className="cursor-pointer" />
-                            </Badge>
-                        ))}
-                    </div>
+                    </main>
+                    <aside className="col-span-3 h-full">
+                        {/* Source Code Editor */}
+                        <Textarea placeholder="Write your code here..." {...register("sourceCode", { required: true })} className="font-mono h-full" />
 
-                    {/* Source Code Editor */}
-                    <Textarea placeholder="Write your code here..." {...register("sourceCode", { required: true })} className="font-mono" />
-
-                    <Button type="submit" className="w-full">
-                        Submit Snippet
-                    </Button>
+                    </aside>
                 </form>
             </CardContent>
         </Card>

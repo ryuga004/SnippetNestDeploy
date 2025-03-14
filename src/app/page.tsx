@@ -22,7 +22,7 @@ const Home = () => {
 
       <SectionWrapper>
 
-        <div className="py-20 bg-white">
+        <div className="py-20 bg-white rounded-lg">
           <div className="container px-4 mx-auto">
             <MovementWrapper direction='none' triggerOnScroll={true}>
               <div className="max-w-3xl mx-auto text-center">

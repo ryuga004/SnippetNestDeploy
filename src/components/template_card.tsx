@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface SnippetCardProps {
     snippet: Snippet;
@@ -50,18 +50,29 @@ export default function SnippetCard({ snippet, setOpenEditModal }: SnippetCardPr
                         <h3 className="font-semibold text-xl text-white">{snippet.title}</h3>
                         {owner &&
 
-                            <Popover>
-                                <PopoverTrigger className="focus:outline-none">
-                                    <EllipsisVertical className="text-white w-5 h-5 cursor-pointer" />
-                                </PopoverTrigger>
-                                <PopoverContent className="w-25 absolute right-0 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
-                                    <button onClick={() => setOpenEditModal({
-                                        open: true,
-                                        snippet: snippet,
-                                    })} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">Edit</button>
-                                    <button onClick={handleDeleteSnippet} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">Delete</button>
-                                </PopoverContent>
-                            </Popover>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button className="focus:outline-none">
+                                        <EllipsisVertical className="text-white w-5 h-5 cursor-pointer" />
+                                    </button>
+                                </DropdownMenuTrigger>
+
+                                <DropdownMenuContent align="end" className="w-25 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
+                                    <DropdownMenuItem
+                                        onClick={() => setOpenEditModal({ open: true, snippet })}
+                                        className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md"
+                                    >
+                                        Edit
+                                    </DropdownMenuItem>
+
+                                    <DropdownMenuItem
+                                        onClick={handleDeleteSnippet}
+                                        className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md"
+                                    >
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
 
                         }
                     </div>

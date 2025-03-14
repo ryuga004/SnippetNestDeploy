@@ -14,7 +14,7 @@ import CreateSnippetForm from "./Forms/createSnippet";
 import LoginRegister from "./Forms/login";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 const Navbar = () => {
     const [openModal, setOpenModal] = useState(false);
@@ -139,31 +139,33 @@ const Navbar = () => {
 
                     <div>
                         {isLoggedIn ? (
-                            <HoverCard>
-                                <HoverCardTrigger asChild>
-                                    <div className="flex justify-center align-center gap-1 ">
-                                        <Avatar className={`${scrolled ? "bg-gray-400" : "bg-white"} cursor-pointer`}>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <div className="flex justify-center items-center gap-1 cursor-pointer">
+                                        <Avatar className={`${scrolled ? "bg-gray-400" : "bg-white"}`}>
                                             <AvatarImage src={isLoggedIn ? user.avatar : "/user_logo.png"} alt="User Avatar" />
                                             <AvatarFallback>{user.username?.charAt(0) || "S"}</AvatarFallback>
                                         </Avatar>
                                         <ChevronDown className="m-auto" size={15} color="gray" />
                                     </div>
-                                </HoverCardTrigger>
+                                </DropdownMenuTrigger>
 
-                                <HoverCardContent align="end" className="w-48 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
-                                    <>
-                                        <button onClick={() => router.push(`/profile/${user.id}`)} className="w-full   flex gap-2 flex-center  text-left px-4 py-2  hover:bg-gray-700 rounded-md"> <UserCircleIcon />  {user.username}</button>
-                                        <button onClick={() => setOpenModal(true)} className="w-full  flex gap-2 flex-center text-left px-4 py-2 hover:bg-gray-700 rounded-md">
-                                            <Clipboard /> Create Snippet
-                                        </button>
-                                        <button onClick={handleLogout} className="w-full   flex gap-2 flex-center  text-left px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md">
-                                            <LogOutIcon />  Logout
-                                        </button>
-                                    </>
-                                </HoverCardContent>
-                            </HoverCard>
+                                <DropdownMenuContent align="end" className="w-48 bg-gray-900 text-white border border-gray-700 shadow-lg rounded-md p-2">
+                                    <DropdownMenuItem onClick={() => router.push(`/profile/${user.id}`)} className="flex gap-2 items-center px-4 py-2 hover:bg-gray-700 rounded-md">
+                                        <UserCircleIcon /> {user.username}
+                                    </DropdownMenuItem>
+
+                                    <DropdownMenuItem onClick={() => setOpenModal(true)} className="flex gap-2 items-center px-4 py-2 hover:bg-gray-700 rounded-md">
+                                        <Clipboard /> Create Snippet
+                                    </DropdownMenuItem>
+
+                                    <DropdownMenuItem onClick={handleLogout} className="flex gap-2 items-center px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md">
+                                        <LogOutIcon /> Logout
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         ) : (
-                            <Button variant="default" onClick={() => setOpenLoginModal(true)} className="w-full text-left px-4 py-2 hover:bg-gray-700 rounded-md">
+                            <Button variant="default" onClick={() => setOpenLoginModal(true)} className="w-full bg-orange-500 text-left px-4 py-2 hover:bg-orange-700 rounded-md">
                                 Login
                             </Button>
                         )}
@@ -203,7 +205,7 @@ const NavLink = ({ href, pathname, children, onClick }: { href: string; pathname
         <Link
             href={href}
             onClick={onClick}
-            className={`px-4 py-2 rounded-lg flex gap-2 ${isActive ? "bg-blue-500 text-white" : "text-gray-300 hover:text-white"}`}
+            className={`px-4 py-2 rounded-lg flex gap-2 ${isActive ? "bg-red-500 text-white" : "text-gray-300 hover:text-white"}`}
         >
             {children}
         </Link>
