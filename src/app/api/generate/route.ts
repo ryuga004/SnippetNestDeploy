@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         //     generationConfig,
         //     history: [],
         // });
-        const query = `Generate a Code based on this description. If the language is not mentioned, then create a React component based on the description. The output should be strictly in this format:
+        const query = `Generate a Code snippet based on this description. If the language is not mentioned, then choose C++ as a language and generate code snippet based on the description. The output should be strictly in this format:
             "title": "string",
             "description": "string",
             "language": "string",

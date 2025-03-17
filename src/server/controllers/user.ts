@@ -113,7 +113,7 @@ export const GetMe = async (_: unknown, __: unknown, context: Context) => {
     }
 }
 export const getAllUsers = async (_: unknown, __: unknown, context: Context) => {
-    if (context?.user?.role === "ADMIN") {
+    if (context?.user?.role !== "ADMIN") {
         throw new Error("Unauthorized: Only for admin use ");
     }
     const all_user = await prisma.user.findMany({ include: { social: true, stats: true, achievements: true } });

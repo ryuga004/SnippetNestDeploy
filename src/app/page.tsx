@@ -1,5 +1,4 @@
 "use client";
-import FeaturedSnippets from '@/components/featuredSnippet';
 import Hero from '@/components/Hero';
 import { Button } from '@/components/ui/button';
 import MovementWrapper from '@/hoc/Animation/movementWrapper';
@@ -15,10 +14,10 @@ const Home = () => {
       {/* <SectionWrapper> */}
       <Hero />
       {/* </SectionWrapper> */}
-      <SectionWrapper>
+      {/* <SectionWrapper>
         <FeaturedSnippets />
 
-      </SectionWrapper>
+      </SectionWrapper> */}
 
       <SectionWrapper>
 
