@@ -40,6 +40,7 @@ const userSlice = createSlice({
         removeUser: (state) => {
             state.user = initialState.user;
             state.isLoggedIn = false;
+            state.isAdmin = false;
         },
         setLoadingUser: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;

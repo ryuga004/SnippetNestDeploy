@@ -2,62 +2,65 @@ import { Snippet } from "@/lib/types";
 import { useState } from "react";
 
 interface FilterOptions {
-    searchQuery: string;
-    tag: string;
-    sortBy: string;
-    language: string;
-    author: string;
+  searchQuery: string;
+  tag: string;
+  sortBy: string;
+  language: string;
+  author: string;
 }
 
 export default function useSnippetFilters(snippets: Snippet[]) {
-    const [filters, setFilters] = useState<FilterOptions>({
-        searchQuery: "",
-        tag: "",
-        sortBy: "",
-        language: "",
-        author: "",
+  const [filters, setFilters] = useState<FilterOptions>({
+    searchQuery: "",
+    tag: "",
+    sortBy: "",
+    language: "",
+    author: "",
+  });
+
+  const resetFilters = () => {
+    setFilters({
+      searchQuery: "",
+      tag: "",
+      sortBy: "",
+      language: "",
+      author: "",
+    });
+  };
+  const handleChange = (key: keyof FilterOptions, value: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: value,
+    }));
+  };
+
+  const filteredSnippets = snippets
+    .filter((snippet) => {
+      const queryRegex = new RegExp(filters.searchQuery, "i");
+      const languageRegex = new RegExp(
+        `^${filters.language.replace(/\+/g, "\\+")}$`,
+        "i"
+      );
+
+      return (
+        (filters.searchQuery === "" ||
+          queryRegex.test(snippet.title) ||
+          queryRegex.test(snippet.description)) &&
+        (filters.language === "" || languageRegex.test(snippet.language)) &&
+        (filters.tag === "" || snippet.tags.includes(filters.tag)) &&
+        (filters.author === "" || snippet.author.username === filters.author)
+      );
+    })
+    .sort((a, b) => {
+      if (filters.sortBy === "newest") {
+        return b.id.localeCompare(a.id);
+      } else if (filters.sortBy === "oldest") {
+        return a.id.localeCompare(b.id);
+      }
+      return 0;
     });
 
-
-
-
-    const resetFilters = () => {
-        setFilters({
-            searchQuery: "",
-            tag: "",
-            sortBy: "",
-            language: "",
-            author: "",
-        });
-    };
-    const handleChange = (key: keyof FilterOptions, value: string) => {
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [key]: value,
-        }));
-    };
-
-    const filteredSnippets = snippets
-        .filter((snippet) => {
-            return (
-                (filters.searchQuery === "" ||
-                    snippet.title.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-                    snippet.description.toLowerCase().includes(filters.searchQuery.toLowerCase())) &&
-                (filters.language === "" || snippet.language === filters.language) &&
-                (filters.tag === "" || snippet.tags.includes(filters.tag)) &&
-                (filters.author === "" || snippet.author.username === filters.author)
-            );
-        })
-        .sort((a, b) => {
-            if (filters.sortBy === "newest") {
-                return b.id.localeCompare(a.id);
-            } else if (filters.sortBy === "oldest") {
-                return a.id.localeCompare(b.id);
-            }
-            return 0;
-        });
-
-    return { filters, handleChange, resetFilters, filteredSnippets };
+  return { filters, handleChange, resetFilters, filteredSnippets };
 }
 
 // INGINITE SCROLL

@@ -72,6 +72,39 @@ query{
 }`
 
 
+export const GET_USER_BY_ID = gql`
+query GetUserById($id: ID!) {
+  getUserById(id: $id) {
+    success,
+    message,
+    user {
+      id,
+      username,
+      avatar,
+      email,
+      role,
+      coverImage,
+      bio,
+      points,
+      social {
+        github,
+        linkedin,
+        twitter
+      },
+      stats {
+        contributions,
+        problemSolved,
+        rank
+      }
+      achievements {
+        id,
+        title,
+        date,
+      }
+    }
+  }
+}
+`
 
 
 //  ** PROBLEM ** //
