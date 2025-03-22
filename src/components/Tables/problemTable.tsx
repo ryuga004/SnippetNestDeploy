@@ -92,7 +92,7 @@ export function ProblemsTable({ problems }: { problems: CodingProblemType[] }) {
             <span>-</span>
           );
         return topics.map((top: string) => (
-          <Badge className="rounded-lg px-3 py-1 text-sm" key={top}>
+          <Badge className="rounded-lg px-3 py-1 mr-1 text-sm" key={top}>
             {top.toUpperCase()}
           </Badge>
         ));
