@@ -19,8 +19,8 @@ import { useState } from "react";
 
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { showToast } from "@/lib";
-import { GET_USER_BY_ID } from "@/lib/services";
-import { useQuery } from "@apollo/client";
+import { GET_USER_BY_ID, UPDATE_USER } from "@/lib/services";
+import { useMutation, useQuery } from "@apollo/client";
 import { motion } from "framer-motion";
 import {
   ActivityIcon,
@@ -79,27 +79,69 @@ const ProfilePage = () => {
   });
   const owner: ProfileUserType = data?.getUserById?.user;
   const submissions = useAppSelector((state) => state.submissions.submissions);
-
-  const handleImageUpload = async (type: "avatar" | "cover") => {
-    // const delay = (ms: number) =>
-    //   new Promise((resolve) => setTimeout(resolve, ms))
-    // const file = await uploadImage();
-    console.log(type);
+  const [upadateUser] = useMutation(UPDATE_USER);
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: "avatar" | "cover"
+  ) => {
     showToast(
       "Uploading image... \n Please wait while we process your image",
       "info"
     );
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    const NewformData = new FormData();
+    NewformData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: NewformData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+      if (owner && data) {
+        const updatedUser = await upadateUser({
+          variables: {
+            updateUserId: owner.id,
+            input: {
+              avatar: type === "avatar" ? data.secure_url : owner.avatar,
+              coverImage: type === "cover" ? data.secure_url : owner.coverImage,
+            },
+          },
+        });
+        if (updatedUser.data.updateUser.success) {
+          showToast("Image uploaded successfully", "success");
+        }
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
   };
 
-  const handleSocialUpdate = () => {
-    // if (owner) {
-    //   setOwner({
-    //     ...owner,
-    //     social: socialInputs,
-    //   });
-    //   setEditingSocial(false);
-    //   showToast("Your social links have been updated.", "success");
-    // }
+  const handleSocialUpdate = async () => {
+    if (owner) {
+      const updatedUser = await upadateUser({
+        variables: {
+          updateUserId: owner.id,
+          input: {
+            social: {
+              github: socialInputs.github || owner.social?.github,
+              twitter: socialInputs.twitter || owner.social?.twitter,
+              linkedin: socialInputs.linkedin || owner.social?.linkedin,
+            },
+          },
+        },
+      });
+      if (!updatedUser.data.updateUser.success) {
+        showToast("Failed to update social links", "error");
+      } else showToast("Your social links have been updated.", "success");
+    }
+    setEditingSocial(false);
   };
 
   const statsCards = [
@@ -150,14 +192,22 @@ const ProfilePage = () => {
             style={{ backgroundImage: `url(${owner?.coverImage})` }}
           >
             {isOwner && (
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => handleImageUpload("cover")}
-              >
-                <CameraIcon className="w-5 h-5" />
-              </Button>
+              <>
+                <input
+                  id="cover-upload"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(event) => handleImageUpload(event, "cover")}
+                />
+
+                <label
+                  htmlFor="cover-upload"
+                  className="absolute top-2 right-2 cursor-pointer z-50  hover:opacity-100 transition-opacity"
+                >
+                  <CameraIcon className="w-5 h-5" />
+                </label>
+              </>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </motion.div>
@@ -174,14 +224,22 @@ const ProfilePage = () => {
                   <AvatarFallback>{owner?.username.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {isOwner && (
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="absolute bottom-0 right-0 rounded-full shadow-md"
-                    onClick={() => handleImageUpload("avatar")}
-                  >
-                    <CameraIcon className="w-4 h-4" />
-                  </Button>
+                  <>
+                    <input
+                      id="avatar-upload"
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(event) => handleImageUpload(event, "avatar")}
+                    />
+
+                    <label
+                      htmlFor="avatar-upload"
+                      className="absolute bottom-0 right-2 cursor-pointer   hover:opacity-100 transition-opacity"
+                    >
+                      <CameraIcon className="w-5 h-5" />
+                    </label>
+                  </>
                 )}
               </motion.div>
             </div>

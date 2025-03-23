@@ -71,6 +71,29 @@ query{
  }
 }`
 
+export const UPDATE_USER = gql`
+mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $updateUserId, input: $input) {
+    
+    success,
+    message,
+    user {
+      id,
+      username,
+      avatar,
+      email,
+      role,
+      coverImage,
+      bio,
+      points,
+      social {
+        github,
+        linkedin,
+        twitter
+      },
+    }
+  }
+}`
 
 export const GET_USER_BY_ID = gql`
 query GetUserById($id: ID!) {

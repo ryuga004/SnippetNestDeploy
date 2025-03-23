@@ -1,9 +1,9 @@
 
+import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import prisma from "../prisma";
-import { User } from "@prisma/client";
 
 const SECRET = process.env.JWT_SECRET!
 interface Context {
@@ -11,7 +11,7 @@ interface Context {
 }
 export const registerUser = async (
     _: unknown,
-    { avatar, username, email, password }: { avatar?: string; username: string; email: string; password: string }
+    { avatar, username, email, password }: { avatar: string; username: string; email: string; password: string }
 ) => {
     try {
         const existingUser = await prisma.user.findFirst({
@@ -28,7 +28,7 @@ export const registerUser = async (
 
         const newUser = await prisma.user.create({
             data: {
-                avatar: avatar ? avatar : "/user_logo.png",
+                avatar,
                 username,
                 email,
                 password: hashedPassword,
@@ -180,7 +180,7 @@ export const updateUser = async (_: unknown, { id, input }: { id: string; input:
             };
         }
 
-        // Filter out undefined fields
+        
         const filteredInput = Object.fromEntries(
             Object.entries(input).filter(([, value]) => value !== undefined)
         );
