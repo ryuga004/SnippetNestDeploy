@@ -8,13 +8,6 @@ const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
 });
 
-// const generationConfig = {
-//     temperature: 1,
-//     topP: 0.95,
-//     topK: 40,
-//     maxOutputTokens: 500,
-//     responseMimeType: "text/plain",
-// };
 
 export async function POST(req: Request) {
     try {
@@ -23,12 +16,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
         }
 
-        // const result = await model.generateContent(prompt);
-
-        // const chatSession = model.startChat({
-        //     generationConfig,
-        //     history: [],
-        // });
         const query = `Generate a Code snippet based on this description. If the language is not mentioned, then choose C++ as a language and generate code snippet based on the description. The output should be strictly in this format:
             "title": "string",
             "description": "string",
