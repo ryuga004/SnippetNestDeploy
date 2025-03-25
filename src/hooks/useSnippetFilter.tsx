@@ -63,7 +63,7 @@ export default function useSnippetFilters(snippets: Snippet[]) {
   return { filters, handleChange, resetFilters, filteredSnippets };
 }
 
-// INGINITE SCROLL
+// INGINITE SCROLLING
 // import { Snippet } from "@/lib/types";
 // import { useState, useEffect, useRef, useCallback } from "react";
 
