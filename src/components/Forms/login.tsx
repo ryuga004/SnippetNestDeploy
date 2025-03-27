@@ -50,6 +50,7 @@ export default function LoginRegister({
       if (!res.ok) throw new Error("Upload failed");
 
       const data = await res.json();
+      // here login image is not uploading to cloudinary ... so i have to check it
       setFormData({ ...formData, avatar: data.secure_url });
       setAvatarUrl(data.secure_url);
     } catch (error) {
