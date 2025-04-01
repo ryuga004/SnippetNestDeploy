@@ -1,7 +1,7 @@
 import React from "react";
 
 const AuthorizedRoute = () => {
-  return <div>AuthorizedRoutesOnly</div>;
+  return <div>AdminRoute</div>;
 };
 
 export default AuthorizedRoute;
