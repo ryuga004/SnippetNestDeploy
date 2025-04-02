@@ -1,6 +1,8 @@
 
+import client from '@/lib/ApolloClient';
+import { GET_ME } from '@/lib/services';
 import { User } from '@/lib/types';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 
 interface UserState {
@@ -23,7 +25,24 @@ const initialState: UserState = {
     isAdmin: false,
 };
 
-
+export const fetchUser = createAsyncThunk(
+    "user/fetchUser",
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await client.query({
+                query: GET_ME,
+                fetchPolicy: "no-cache",
+            });
+            if (!data.GetMe.success) {
+                return rejectWithValue(data.GetMe.message || "Failed to fetch user");
+            }
+            return data.GetMe.user;
+        } catch(error) {
+            console.log("Error fetching user:",error);
+            return rejectWithValue("Error fetching user");
+        }
+    }
+)
 
 const userSlice = createSlice({
     name: 'user',
@@ -49,6 +68,29 @@ const userSlice = createSlice({
             state.error = action.payload;
         },
     },
+    extraReducers: (builder) => {
+        builder.addCase(fetchUser.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(fetchUser.fulfilled, (state, action) => {
+            state.loading = false;
+            state.user = {
+                id: action.payload.id,
+                username: action.payload.username,
+                email: action.payload.email,
+                avatar: action.payload?.avatar || "/user_logo.png",
+              };
+            state.isAdmin = action.payload?.role === "ADMIN";
+            state.error = null;
+            state.isLoggedIn = true;
+        });
+        builder.addCase(fetchUser.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload as string;
+        });
+    },
+
 });
 
 

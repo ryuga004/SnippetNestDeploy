@@ -1,26 +1,26 @@
-'use client'
-import { AppStore, makeStore } from '@/redux/store'
-import { useEffect, useRef } from 'react'
-import { Provider } from 'react-redux'
-import { fetchSnippets } from './slice/snippetSlice'
-import { fetchProblems } from './slice/problemSlice'
+"use client";
+import { AppStore, makeStore } from "@/redux/store";
+import { useEffect, useRef } from "react";
+import { Provider } from "react-redux";
+import { fetchProblems } from "./slice/problemSlice";
+import { fetchSnippets } from "./slice/snippetSlice";
+import { fetchUser } from "./slice/userSlice";
 
 export default function StoreProvider({
-    children,
+  children,
 }: {
-    children: React.ReactNode
+  children: React.ReactNode;
 }) {
-    const storeRef = useRef<AppStore>(undefined)
-    if (!storeRef.current) {
+  const storeRef = useRef<AppStore>(undefined);
+  if (!storeRef.current) {
+    storeRef.current = makeStore();
+  }
 
-        storeRef.current = makeStore()
-    }
+  useEffect(() => {
+    storeRef.current?.dispatch(fetchSnippets());
+    storeRef.current?.dispatch(fetchProblems());
+    storeRef.current?.dispatch(fetchUser());
+  }, []);
 
-    useEffect(() => {
-        storeRef.current?.dispatch(fetchSnippets())
-        storeRef.current?.dispatch(fetchProblems())
-    }, [])
-
-    return <Provider store={storeRef?.current}>{children}</Provider>
+  return <Provider store={storeRef?.current}>{children}</Provider>;
 }
-

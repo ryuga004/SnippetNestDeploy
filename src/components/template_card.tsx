@@ -36,7 +36,7 @@ export default function SnippetCard({
     if (isLoggedIn && user) {
       setOwner(snippet.author.id === user.id);
     }
-  }, [isLoggedIn, user]);
+  }, [snippet, isLoggedIn, user]);
   const handleDeleteSnippet = () => {
     dispatch(removeSnippet(snippet.id));
     toast.success(`Snippet "${snippet.title}" deleted`, {

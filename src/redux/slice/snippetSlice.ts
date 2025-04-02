@@ -28,7 +28,7 @@ export const fetchSnippets = createAsyncThunk(
                 fetchPolicy: "no-cache",
             });
 
-            console.log("Response Data:", data);
+           
 
             if (!data.getAllSnippets.success) {
                 return rejectWithValue(data.getAllSnippets.message || "Failed to fetch snippets");
@@ -81,7 +81,7 @@ const snippetSlice = createSlice({
             })
             .addCase(fetchSnippets.fulfilled, (state, action) => {
                 state.loading = false;
-                console.log("SDLFNOSNGS", action.payload);
+               
                 state.snippets = action.payload.map(removeTypename);
             })
             .addCase(fetchSnippets.rejected, (state, action) => {
