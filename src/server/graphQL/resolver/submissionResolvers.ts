@@ -79,6 +79,12 @@ export const submissionResolvers = {
                     where: { id: context.user.id },
                     data: {
                         points: { increment: value},
+                        // stats : {
+                        //     update: {
+
+                        //         problemsSolved: { increment: 1 },
+                        //     }
+                        // }
                     },
                 });
             }

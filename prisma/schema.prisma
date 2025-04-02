@@ -17,10 +17,8 @@ model User {
   role         Role          @default(USER)
   username     String        @unique
   email        String        @unique
-  social       Social?       @relation(fields: [socialId], references: [id])
-  socialId     String?       @unique
-  stats        Stats         @relation(fields: [statsId], references: [id])
-  statsId      String        @unique
+  social       Social?       
+  stats        Stats?             
   achievements Achievement[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -33,12 +31,14 @@ enum Role {
   ADMIN
 }
 
+
 model Social {
   id       String  @id @default(cuid())
   github   String? @unique
   twitter  String? @unique
   linkedin String? @unique
-  User     User?
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String  @unique
 }
 
 model Stats {
@@ -46,7 +46,8 @@ model Stats {
   contributions Int    @default(0)
   rank          Int    @default(0)
   problemSolved Int    @default(0)
-  User          User?
+  user          User   @relation(fields: [userId], references: [id] , onDelete: Cascade) 
+  userId        String @unique
 }
 
 model Achievement {

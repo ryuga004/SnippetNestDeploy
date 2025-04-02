@@ -94,6 +94,14 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
     }
   }
 }`
+export const UPDATE_USER_SOCIAL = gql`
+  mutation UpdateUserSocial($input: UpdateUserSocialInput!) {
+  updateUserSocial(input: $input) {
+    success,
+    message 
+  }
+}
+`
 
 export const GET_USER_BY_ID = gql`
 query GetUserById($id: ID!) {

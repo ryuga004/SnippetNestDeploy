@@ -32,12 +32,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { difficultyColors } from "@/lib";
+
 import { CodingProblemType } from "@/lib/types";
 import { useRouter } from "next/navigation";
 
 const difficultyOrder = { easy: 0, medium: 1, hard: 2 };
 
+const difficultyColors: Record<string, string> = {
+  easy:
+    "bg-green-100 text-green-700 border border-green-300  hover:bg-color-green-300",
+  medium:
+    "bg-yellow-100 text-yellow-700 border border-yellow-300 hover:bg-color-yellow-300",
+  hard: "bg-red-100 text-red-700 border border-red-300 hover:bg-color-red-300",
+};
 export function ProblemsTable({ problems }: { problems: CodingProblemType[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -85,7 +92,11 @@ export function ProblemsTable({ problems }: { problems: CodingProblemType[] }) {
         </Button>
       ),
       cell: ({ row }) => {
-        const topics = row.original.topic;
+        const topics = Array.isArray(row.original.topic)
+          ? row.original.topic.filter(
+              (topic) => topic !== null && topic !== undefined && topic !== ""
+            )
+          : [];
 
         return topics.map((top: string) => (
           <Badge className="rounded-lg px-3 py-1 mr-1 text-sm" key={top}>

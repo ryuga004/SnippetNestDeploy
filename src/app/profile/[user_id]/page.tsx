@@ -9,17 +9,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAppSelector } from "@/redux/redux-hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { showToast } from "@/lib";
-import { GET_USER_BY_ID, UPDATE_USER } from "@/lib/services";
+import {
+  GET_USER_BY_ID,
+  UPDATE_USER,
+  UPDATE_USER_SOCIAL,
+} from "@/lib/services";
+import { fetchUser } from "@/redux/slice/userSlice";
 import { useMutation, useQuery } from "@apollo/client";
 import { motion } from "framer-motion";
 import {
@@ -60,24 +66,38 @@ interface ProfileUserType {
     icon: string;
     date: string;
   }>;
-  //   recent_submissions: Array<Submission>;
 }
 
 const ProfilePage = () => {
   const { user_id } = useParams() as { user_id: string };
   const { user } = useAppSelector((state) => state.user);
   const [editingSocial, setEditingSocial] = useState(false);
+  const [editingBio, setEditingBio] = useState<boolean>(false);
   const isOwner = user.id === user_id;
+  const dispatch = useAppDispatch();
   const [socialInputs, setSocialInputs] = useState({
     github: "",
     twitter: "",
     linkedin: "",
   });
-  const { data, loading } = useQuery(GET_USER_BY_ID, {
+  const { data, loading, refetch } = useQuery(GET_USER_BY_ID, {
     variables: { id: user_id },
     skip: !user_id,
   });
   const owner: ProfileUserType = data?.getUserById?.user;
+  const [editingBioInput, setEditingBioInput] = useState<string>(
+    owner?.bio ? owner.bio : ""
+  );
+  useEffect(() => {
+    if (owner) {
+      setSocialInputs({
+        github: owner.social?.github || "",
+        twitter: owner.social?.twitter || "",
+        linkedin: owner.social?.linkedin || "",
+      });
+      setEditingBioInput(owner.bio ? owner.bio : "");
+    }
+  }, [owner]);
   const submissions = useAppSelector((state) => state.submissions.submissions);
   const [upadateUser] = useMutation(UPDATE_USER);
   const handleImageUpload = async (
@@ -116,32 +136,33 @@ const ProfilePage = () => {
         });
         if (updatedUser.data.updateUser.success) {
           showToast("Image uploaded successfully", "success");
+          dispatch(fetchUser());
         }
       }
     } catch (error) {
       console.error("Upload error:", error);
     }
   };
-
+  const [updateUserSocial] = useMutation(UPDATE_USER_SOCIAL);
   const handleSocialUpdate = async () => {
     if (owner) {
-      const updatedUser = await upadateUser({
+      const updatedUserSocial = await updateUserSocial({
         variables: {
-          updateUserId: owner.id,
           input: {
-            social: {
-              github: socialInputs.github || owner.social?.github,
-              twitter: socialInputs.twitter || owner.social?.twitter,
-              linkedin: socialInputs.linkedin || owner.social?.linkedin,
-            },
+            github: socialInputs.github || owner.social?.github,
+            twitter: socialInputs.twitter || owner.social?.twitter,
+            linkedin: socialInputs.linkedin || owner.social?.linkedin,
           },
         },
       });
-      if (!updatedUser.data.updateUser.success) {
+      if (!updatedUserSocial?.data?.updateUserSocial?.success) {
         showToast("Failed to update social links", "error");
-      } else showToast("Your social links have been updated.", "success");
+      } else {
+        showToast("Your social links have been updated.", "success");
+      }
     }
     setEditingSocial(false);
+    refetch();
   };
 
   const statsCards = [
@@ -178,8 +199,23 @@ const ProfilePage = () => {
       </SectionWrapper>
     );
   }
-
-  //   if (loading) return <CircularLoader />;
+  const handleBioUpdate = async () => {
+    if (owner) {
+      const updatedUser = await upadateUser({
+        variables: {
+          updateUserId: owner.id,
+          input: {
+            bio: editingBioInput,
+          },
+        },
+      });
+      if (!updatedUser.data.updateUser.success) {
+        showToast("Failed to update bio", "error");
+      } else showToast("Your bio has been updated.", "success");
+    }
+    refetch();
+    setEditingBio(false);
+  };
   return (
     <SectionWrapper>
       <main className="max-w-4xl mx-auto p-4 space-y-6">
@@ -251,7 +287,42 @@ const ProfilePage = () => {
               className="text-center mt-4"
             >
               <h1 className="text-2xl font-bold">{owner?.username}</h1>
-              <p className="text-muted-foreground mt-2">{owner?.bio}</p>
+              <p className="text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                {owner?.bio ? owner.bio : isOwner ? "add a bio" : ""}
+                {isOwner && (
+                  <Dialog open={editingBio} onOpenChange={setEditingBio}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <PencilIcon className="w-4 h-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Bio </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Textarea
+                            id="bio"
+                            value={editingBioInput}
+                            onChange={(e) => setEditingBioInput(e.target.value)}
+                            placeholder="Write something about yourself..."
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={() => setEditingBio(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleBioUpdate}>Save Changes</Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </p>
               <p className="text-sm text-muted-foreground mt-1">
                 {owner?.email}
               </p>

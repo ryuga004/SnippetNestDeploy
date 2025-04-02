@@ -63,8 +63,14 @@ export const userTypeDefs = `#graphql
     updateUser(id: ID!, input: UpdateUserInput!):updateUserResponse!
     logoutUser:logoutUserResponse!
     deleteUser(id:ID!) : deleteUserResponse!
+    updateUserSocial( input: UpdateUserSocialInput!):updateUserSocialResponse!
   }
   # reponses types 
+  input UpdateUserSocialInput {
+    github : String
+    linkedin : String
+    twitter : String
+  }
   input UpdateUserInput {
     avatar: String
     coverImage: String
@@ -108,5 +114,10 @@ export const userTypeDefs = `#graphql
     success: Boolean!
     message: String!
     user: User!
+  }
+  type updateUserSocialResponse {
+    success :Boolean!
+    message : String!
+    social : Social!
   }
 `;

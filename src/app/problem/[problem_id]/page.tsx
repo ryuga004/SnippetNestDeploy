@@ -849,7 +849,7 @@ function ProblemInterFace() {
   return (
     <SectionWrapper>
       <Toaster richColors position="top-center" />
-      <div className="min-h-screen rounded-lg shadow-xl bg-background flex flex-col">
+      <div className="h-screen rounded-lg shadow-xl bg-background flex flex-col">
         {/* Header */}
         <header className="border-b px-6 py-3 flex items-center justify-between bg-card">
           <div className="flex items-center gap-2">
@@ -889,7 +889,7 @@ function ProblemInterFace() {
               <Tabs
                 value={activeTab}
                 onValueChange={setActiveTab}
-                className="h-full flex flex-col"
+                className="h-full  flex flex-col"
               >
                 <div className="px-4 pt-4 border-b">
                   <TabsList className="w-full grid grid-cols-3">
@@ -919,7 +919,7 @@ function ProblemInterFace() {
 
                 <TabsContent
                   value="description"
-                  className="flex-1 overflow-auto p-4 space-y-4"
+                  className="flex-1 max-h-[100vh] overflow-auto p-4 space-y-4"
                 >
                   <div>
                     <h2 className="text-2xl font-bold text-foreground">
