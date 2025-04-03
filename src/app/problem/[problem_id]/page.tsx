@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { difficultyColors, showToast } from "@/lib";
 
+import CircularLoader from "@/components/Loaders/circularLoader";
 import {
   CREATE_SUBMISSION,
   GET_SOLUTION,
@@ -111,8 +112,11 @@ function ProblemInterFace() {
   const [output, setOutput] = useState<JSX.Element | string | undefined>(
     undefined
   );
-  // const { submissions, loading } = useAppSelector(state => state.submissions);
+
   const { user, isLoggedIn } = useAppSelector((state) => state.user);
+  const { loading: ProblemsLoading } = useAppSelector(
+    (state) => state.problems
+  );
   const [testCases, setTestCases] = useState<TestCaseType[]>([]);
   const [status, setStatus] = useState<
     "idle" | "running" | "success" | "error"
@@ -157,7 +161,7 @@ function ProblemInterFace() {
         item.author.id === user.id &&
         item.status === true
     );
-
+    if (!sub) return false;
     return sub.length > 0;
   }, [isLoggedIn, data, problem_id, user]);
 
@@ -816,10 +820,13 @@ function ProblemInterFace() {
     setStatus("success");
   };
 
-  if (!problem) {
-    return <div>No problem found ..</div>;
+  if (ProblemsLoading) {
+    return <CircularLoader />;
   }
 
+  if (!problem) {
+    return <div> </div>;
+  }
   const handleGetSolution = async () => {
     setGenerating(true);
     try {
