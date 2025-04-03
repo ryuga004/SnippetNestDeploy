@@ -53,7 +53,7 @@ export const snippetResolvers = {
     Mutation: {
         createSnippet: async (_: unknown, { input }: { input: CreateSnippetInput }, context: Context) => {
             if (!context.user) throw new Error("You must be logged in");
-            // console.log(input);
+            
             const newSnippet = await prisma.snippet.create({
                 data: {
                     ...input,
@@ -64,6 +64,27 @@ export const snippetResolvers = {
             if (!newSnippet) {
                 throw new Error("An error occured during creation of snippet");
             }
+            const userStats = await prisma.stats.findUnique({
+                where : {
+                    userId : context.user.id ,
+                }
+            })
+            if(userStats){
+                await prisma.stats.update({
+                    where: { userId: context.user.id },
+                    data: {
+                        contributions : {increment : 1},
+                    },
+                });
+            }else {
+                await prisma.stats.create({
+                    data : {
+                        userId : context.user.id , 
+                        contributions : 1 
+                    }
+                })
+            }
+           
             return {
                 success: true,
                 message: "snippet created successfully!",

@@ -34,6 +34,7 @@ import {
   CheckCircleIcon,
   ChevronDown,
   ChevronUp,
+  CircleCheckBigIcon,
   CodeIcon,
   Copy,
   Loader2,
@@ -42,7 +43,7 @@ import {
   TerminalIcon,
 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect, useMemo, useState } from "react";
 import { Toaster } from "sonner";
 import "./styles.css";
 
@@ -147,7 +148,19 @@ function ProblemInterFace() {
     },
   });
 
-  // console.log(submissions);
+  const isSolved = useMemo(() => {
+    if (!isLoggedIn || !user) return false;
+
+    const sub = data?.getAllSubmissionsByUser?.submissions.filter(
+      (item: Submission) =>
+        item.problem.id === problem_id &&
+        item.author.id === user.id &&
+        item.status === true
+    );
+
+    return sub.length > 0;
+  }, [isLoggedIn, data, problem_id, user]);
+
   const [getSolution] = useLazyQuery(GET_SOLUTION);
   useEffect(() => {
     if (isLoggedIn && data?.getAllSubmissionsByUser?.submissions) {
@@ -733,10 +746,7 @@ function ProblemInterFace() {
       if (res.expected !== res.actualOutput) {
         allPassed = false;
       }
-      // console.log(res);
     });
-
-    // ending running all test cases
 
     const successOutput = (
       <div className="p-3 bg-green-500/10 border border-green-200 rounded-md">
@@ -839,12 +849,6 @@ function ProblemInterFace() {
     } finally {
       setGenerating(false);
     }
-    // if (findSolution) {
-    //     setSolution(findSolution);
-    // } else {
-    //     // generate a ai call which
-    //     console.log("solution no found");
-    // }
   };
   return (
     <SectionWrapper>
@@ -855,6 +859,13 @@ function ProblemInterFace() {
           <div className="flex items-center gap-2">
             <CodeIcon className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-semibold">CodeChallenge</h1>
+            {isSolved && (
+              <span className="flex items-center gap-1 text-green-900">
+                {" "}
+                <CircleCheckBigIcon color="green" />
+                {"Solved"}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <Badge

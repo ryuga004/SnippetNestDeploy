@@ -66,7 +66,8 @@ query{
      id ,
      username,
      avatar,
-     email 
+     email,
+     role
    }  
  }
 }`

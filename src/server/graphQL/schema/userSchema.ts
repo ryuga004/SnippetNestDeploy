@@ -76,6 +76,7 @@ export const userTypeDefs = `#graphql
     coverImage: String
     bio: String
     points: Int
+    role : String 
   }
   type registerUserResponse {
     success : Boolean!,

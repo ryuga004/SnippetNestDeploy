@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,6 +88,9 @@ const ProfilePage = () => {
   const [editingBioInput, setEditingBioInput] = useState<string>(
     owner?.bio ? owner.bio : ""
   );
+  const recentSubmissions = useMemo(() => {
+    return [];
+  }, [data, owner]);
   useEffect(() => {
     if (owner) {
       setSocialInputs({
@@ -466,7 +469,7 @@ const ProfilePage = () => {
             </TabsTrigger>
             <TabsTrigger value="activity">
               <ActivityIcon className="w-4 h-4 mr-2" />
-              Submissions
+              Recent Submissions
             </TabsTrigger>
             <TabsTrigger value="saved">
               <BookmarkIcon className="w-4 h-4 mr-2" />
@@ -475,72 +478,99 @@ const ProfilePage = () => {
           </TabsList>
 
           <TabsContent value="achievements" className="mt-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {owner?.achievements.map((achievement, index) => (
-                    <motion.div
-                      key={achievement.id}
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.1 * index }}
-                    >
-                      <Card>
-                        <CardContent className="p-4 flex items-center gap-4">
-                          <div className="text-2xl">{achievement.icon}</div>
-                          <div>
-                            <h3 className="font-semibold">
-                              {achievement.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              Earned on{" "}
-                              {new Date(achievement.date).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {owner.achievements.length === 0 && (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center text-muted-foreground">
+                    <TrophyIcon className="w-12 h-12 mx-auto mb-4" />
+                    <p>No Acheivements yet</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {owner?.achievements?.length > 0 && (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <>
+                      {owner.achievements.map((achievement, index) => (
+                        <motion.div
+                          key={achievement.id}
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          transition={{ duration: 0.5, delay: 0.1 * index }}
+                        >
+                          <Card>
+                            <CardContent className="p-4 flex items-center gap-4">
+                              <div className="text-2xl">{achievement.icon}</div>
+                              <div>
+                                <h3 className="font-semibold">
+                                  {achievement.title}
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                  Earned on{" "}
+                                  {new Date(
+                                    achievement.date
+                                  ).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="activity" className="mt-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {submissions.map((submission, index) => (
-                    <motion.div
-                      key={submission.id}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.1 * index }}
-                      className="flex items-center gap-4"
-                    >
-                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
-                        <div className="flex items-center gap-2">
-                          {submission.status ? (
-                            <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                          ) : (
-                            <AlertCircleIcon className="h-5 w-5 text-red-500" />
-                          )}
-                          <span
-                            className={
-                              submission.status
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }
-                          >
-                            {submission.status ? "Accepted" : "Wrong Answer"}
-                          </span>
+            {recentSubmissions?.length === 0 ? (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center text-muted-foreground">
+                    <ActivityIcon className="w-12 h-12 mx-auto mb-4" />
+                    <p>No Submissions yet</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    {submissions.map((submission, index) => (
+                      <motion.div
+                        key={submission.id}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.1 * index }}
+                        className="flex items-center gap-4"
+                      >
+                        <div className="flex items-center justify-between p-3 bg-muted/50 rounded-md">
+                          <div className="flex items-center gap-2">
+                            {submission.status ? (
+                              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                            ) : (
+                              <AlertCircleIcon className="h-5 w-5 text-red-500" />
+                            )}
+                            <span
+                              className={
+                                submission.status
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }
+                            >
+                              {submission.status ? "Accepted" : "Wrong Answer"}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="saved" className="mt-6">
