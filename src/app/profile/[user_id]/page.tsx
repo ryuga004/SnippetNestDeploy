@@ -37,6 +37,7 @@ import {
   GithubIcon,
   LinkedinIcon,
   PencilIcon,
+  PlusCircleIcon,
   TrophyIcon,
   TwitterIcon,
   UserIcon,
@@ -67,14 +68,29 @@ interface ProfileUserType {
     date: string;
   }>;
 }
+interface codingProfileInputType {
+  codeforces?: string;
+  codechef?: string;
+  leetcode?: string;
+}
 
 const ProfilePage = () => {
   const { user_id } = useParams() as { user_id: string };
   const { user } = useAppSelector((state) => state.user);
   const [editingSocial, setEditingSocial] = useState(false);
   const [editingBio, setEditingBio] = useState<boolean>(false);
+  const [openCodingProfileDialog, setOpenCodingProfileDialog] = useState<
+    boolean
+  >(false);
   const isOwner = user.id === user_id;
   const dispatch = useAppDispatch();
+  const [codingProfileInput, setCodingProfileInput] = useState<
+    codingProfileInputType
+  >({
+    codechef: "",
+    codeforces: "",
+    leetcode: "",
+  });
   const [socialInputs, setSocialInputs] = useState({
     github: "",
     twitter: "",
@@ -219,6 +235,7 @@ const ProfilePage = () => {
     refetch();
     setEditingBio(false);
   };
+
   return (
     <SectionWrapper>
       <main className="max-w-4xl mx-auto p-4 space-y-6">
@@ -437,7 +454,77 @@ const ProfilePage = () => {
             </motion.div>
           </CardContent>
         </Card>
-
+        {isOwner && (
+          <Dialog
+            open={openCodingProfileDialog}
+            onOpenChange={setOpenCodingProfileDialog}
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full" size="icon">
+                Add Coding Profile
+                <PlusCircleIcon className="w-4 h-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Coding Profile</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="codeforces">Codeforces handle</Label>
+                  <Input
+                    id="codeforces"
+                    value={codingProfileInput.codeforces}
+                    onChange={(e) =>
+                      setCodingProfileInput({
+                        ...codingProfileInput,
+                        codeforces: e.target.value,
+                      })
+                    }
+                    placeholder="Coderforces handle"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="codechef">Codechef Handle</Label>
+                  <Input
+                    id="codechef"
+                    value={codingProfileInput.codechef}
+                    placeholder="Codechef handle"
+                    onChange={(e) =>
+                      setCodingProfileInput({
+                        ...codingProfileInput,
+                        codechef: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="leetcode">Leetcode Handle</Label>
+                  <Input
+                    id="leetcode"
+                    value={codingProfileInput.leetcode}
+                    placeholder="Leetcode handle"
+                    onChange={(e) =>
+                      setCodingProfileInput({
+                        ...codingProfileInput,
+                        leetcode: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setOpenCodingProfileDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button>Save Changes</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {statsCards.map((stat, index) => (
             <motion.div
@@ -460,7 +547,7 @@ const ProfilePage = () => {
             </motion.div>
           ))}
         </div>
-
+        {/* <CodingProfileCard handle={codingProfileInput?.codeforces} /> */}
         <Tabs defaultValue="achievements" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="achievements">

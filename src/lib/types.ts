@@ -79,3 +79,11 @@ export interface Solution {
         code: string;
     }[];
 }
+
+export interface ContestType {
+    name : string ,
+    id : string ,
+    startTime : Date ,
+    link : string ,
+    platform :string 
+}

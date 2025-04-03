@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeUser } from "@/redux/slice/userSlice";
 import { useMutation } from "@apollo/client";
 import {
+  Calendar,
   ChevronDown,
   Clipboard,
   Code,
@@ -152,6 +153,10 @@ const Navbar = () => {
               <NavLink href="/problems" pathname={pathname}>
                 <Code className="w-5 h-5 mr-2" />
                 Practice
+              </NavLink>
+              <NavLink href="/events" pathname={pathname}>
+                <Calendar className="w-5 h-5 mr-2" />
+                Challeges
               </NavLink>
               <NavLink href="/generate" pathname={pathname}>
                 <Sparkles className="w-5 h-5 mr-2" />
