@@ -45,6 +45,7 @@ export const userTypeDefs = `#graphql
     getUserById(id: ID!): getUserByIdResponse!
     achievements(userId: ID!): [Achievement!]!
     GetMe: GetMeResponse!
+    getLeaderBoardUsers: GetAllUserResponse!
   }
 
   type Mutation {

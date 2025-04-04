@@ -7,6 +7,52 @@ export const userResolvers = {
         getAllUsers,
         GetMe,
         getUserById,
+        getLeaderBoardUsers : async () => {
+            try {
+
+                const users = await prisma.user.findMany({
+                    orderBy: {
+                        points: "desc",
+                    },
+                });
+
+                // if (users) {
+                //     for (const [index, user] of users.entries()) {
+                //         const stats = await prisma.stats.findUnique({
+                //             where: { userId: user.id },
+                //         });
+                //         if (!stats) {
+                //                 await prisma.stats.create({
+                //                 data: {
+                //                     userId: user.id,
+                //                     rank: index + 1,
+                //                 },
+                //             });
+                //         }else {
+                //             await prisma.stats.update({
+                //                 where: { userId: user.id },
+                //                 data: {
+                //                     rank: index + 1,
+                //                 },
+                //             });
+                //         }
+                //     }
+                // }
+
+                return {
+                    success: true,
+                    message: "Users fetched successfully",
+                    users,
+                };
+            } catch (error) {
+                console.error(error);
+                return {
+                    success: false,
+                    message: "Something went wrong",
+                    users: null,
+                };
+            }
+        }
     },
     Mutation: {
         deleteUser,

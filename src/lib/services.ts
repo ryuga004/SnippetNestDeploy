@@ -347,3 +347,25 @@ query GetDashboardData {
   }
 }
 `
+
+// LeaderBoard 
+
+export const GET_LEADERBOARD = gql`
+query GetLeaderBoardUsers {
+  getLeaderBoardUsers {
+    success
+    message
+    users {
+      id ,
+      username ,
+avatar ,
+      points ,
+      stats {
+      rank ,
+      contributions ,
+      problemSolved
+      }
+    }
+  }
+}
+`

@@ -37,7 +37,6 @@ import {
   GithubIcon,
   LinkedinIcon,
   PencilIcon,
-  PlusCircleIcon,
   TrophyIcon,
   TwitterIcon,
   UserIcon,
@@ -68,29 +67,29 @@ interface ProfileUserType {
     date: string;
   }>;
 }
-interface codingProfileInputType {
-  codeforces?: string;
-  codechef?: string;
-  leetcode?: string;
-}
+// interface codingProfileInputType {
+//   codeforces?: string;
+//   codechef?: string;
+//   leetcode?: string;
+// }
 
 const ProfilePage = () => {
   const { user_id } = useParams() as { user_id: string };
   const { user } = useAppSelector((state) => state.user);
   const [editingSocial, setEditingSocial] = useState(false);
   const [editingBio, setEditingBio] = useState<boolean>(false);
-  const [openCodingProfileDialog, setOpenCodingProfileDialog] = useState<
-    boolean
-  >(false);
+  // const [openCodingProfileDialog, setOpenCodingProfileDialog] = useState<
+  //   boolean
+  // >(false);
   const isOwner = user.id === user_id;
   const dispatch = useAppDispatch();
-  const [codingProfileInput, setCodingProfileInput] = useState<
-    codingProfileInputType
-  >({
-    codechef: "",
-    codeforces: "",
-    leetcode: "",
-  });
+  // const [codingProfileInput, setCodingProfileInput] = useState<
+  //   codingProfileInputType
+  // >({
+  //   codechef: "",
+  //   codeforces: "",
+  //   leetcode: "",
+  // });
   const [socialInputs, setSocialInputs] = useState({
     github: "",
     twitter: "",
@@ -454,12 +453,13 @@ const ProfilePage = () => {
             </motion.div>
           </CardContent>
         </Card>
-        {isOwner && (
+        {/* {isOwner && (
           <Dialog
             open={openCodingProfileDialog}
             onOpenChange={setOpenCodingProfileDialog}
           >
             <DialogTrigger asChild>
+        
               <Button variant="outline" className="w-full" size="icon">
                 Add Coding Profile
                 <PlusCircleIcon className="w-4 h-4" />
@@ -524,7 +524,7 @@ const ProfilePage = () => {
               </div>
             </DialogContent>
           </Dialog>
-        )}
+        )} */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {statsCards.map((stat, index) => (
             <motion.div

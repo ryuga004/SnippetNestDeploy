@@ -10,6 +10,7 @@ import {
   Calendar,
   ChevronDown,
   Clipboard,
+  ClipboardListIcon,
   Code,
   FileText,
   Home,
@@ -202,7 +203,12 @@ const Navbar = () => {
                   >
                     <Clipboard /> Create Snippet
                   </DropdownMenuItem>
-
+                  <DropdownMenuItem
+                    onClick={() => router.push("/leaderboard")}
+                    className="flex gap-2 items-center px-4 py-2 hover:bg-gray-700 rounded-md"
+                  >
+                    <ClipboardListIcon /> Leaderboard
+                  </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleLogout}
                     className="flex gap-2 items-center px-4 py-2 text-red-500 hover:bg-gray-700 rounded-md"
