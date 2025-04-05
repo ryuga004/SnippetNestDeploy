@@ -1242,6 +1242,11 @@ function ProblemInterFace() {
                         theme="vs-dark"
                         onChange={(value) => setCode(value || "")}
                         className="rounded-md border border-gray-700"
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                        }}
                       />
                     </div>
                   </div>

@@ -36,7 +36,7 @@ const TemplateDetail = () => {
   useEffect(() => {
     if (!id || snippets.length === 0) return;
     const snip = snippets.find((item) => item.id === id);
-    // console.log(id);
+
     if (snip) {
       setLoading(false);
     }
@@ -160,14 +160,15 @@ const TemplateDetail = () => {
             </Button>
           </div>
           <div className="mt-6 relative">
-            {/* <CodeEditor sourceCode={snippet.sourceCode} /> */}
             <Editor
               height="500px"
               defaultLanguage={snippet.language}
               value={snippet.sourceCode}
               theme="vs-dark"
-              // onChange={(value) => setCode(value || "")}
-              className="rounded-md border border-gray-700"
+              options={{
+                minimap: { enabled: false },
+              }}
+              className="rounded-md border border-gray-700 "
             />
           </div>
         </div>

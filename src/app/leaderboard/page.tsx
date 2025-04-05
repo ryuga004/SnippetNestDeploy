@@ -69,7 +69,12 @@ const Leaderboard = () => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
+              <tr
+                key={user.id}
+                className={`hover:bg-gray-50 ${
+                  currentUser?.id === user.id ? "bg-yellow-100" : ""
+                }`}
+              >
                 <td className="border-b px-4 py-2">
                   {user.stats?.rank || "-"}
                 </td>

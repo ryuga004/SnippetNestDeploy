@@ -91,10 +91,8 @@ const EditSnippet = ({ snippet, handleClose }: SnippetEditFormProps) => {
   };
   return (
     <CenterEditModal handleSubmit={handleSubmit} handleClose={handleClose}>
-      <div className="h-[75vh] w-[80vw] flex flex-col ">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text mb-6 text-left">
-          Edit Snippet
-        </h2>
+      <div className="h-[75vh] z-100 w-[80vw] flex flex-col ">
+        <h2 className="text-3xl text-gray-600 mb-2 text-left">Edit Snippet</h2>
 
         <Card className="bg-gradient-to-br flex-1 max from-gray-900 via-gray-800 to-gray-900  shadow-xl rounded-md p-6 border border-gray-700">
           <ScrollArea className=" h-full">

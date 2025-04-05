@@ -24,10 +24,10 @@ function CenterEditModal({
   useCloseOnScroll(handleClose);
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-100 flex  items-center justify-center bg-black/50 backdrop-blur-sm">
       <div
         ref={modalRef}
-        className={`relative w-[max-content] h-[max-content]  bg-white p-6 shadow-xl rounded-lg ${className}`}
+        className={`relative w-[max-content] h-[max-content] mt-12  bg-white p-3 shadow-xl rounded-lg ${className}`}
       >
         <header>
           <button
@@ -40,17 +40,17 @@ function CenterEditModal({
         <form onSubmit={handleSubmit}>
           <main>{children}</main>
 
-          <footer className="flex justify-between mt-6">
+          <footer className="flex justify-between mt-3">
             <Button
               variant="outline"
               onClick={handleClose}
-              className="text-red-400 border-red-500"
+              className="w-[150px] bg-red-500 hover:bg-red-700 text-white border-red-500"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white"
+              className="w-[150px] bg-blue-500 hover:bg-blue-600 text-white"
             >
               Save Changes
             </Button>
