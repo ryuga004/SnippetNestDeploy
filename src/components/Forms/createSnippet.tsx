@@ -51,8 +51,8 @@ export default function CreateSnippetForm({
 
   const [tagInput, setTagInput] = useState("");
 
-  // Sync tags state with useForm
   const tags = watch("tags", []);
+  const [loading, setLoading] = useState(false);
 
   const addTag = () => {
     if (tagInput && !tags.includes(tagInput)) {
@@ -71,6 +71,8 @@ export default function CreateSnippetForm({
   const [createSnippet] = useMutation(CREATE_SNIPPET);
 
   const onSubmit = async (values: FormDataType) => {
+    setLoading(true);
+
     try {
       const res = await createSnippet({
         variables: {
@@ -94,11 +96,15 @@ export default function CreateSnippetForm({
         showToast(res.data.createSnippet.message, "success");
         handleClose();
       } else {
-        console.log("Cannot create a snippet ...");
+        showToast(
+          "An error occured during snippet creation please, try again",
+          "error"
+        );
       }
     } catch (error) {
       console.error(error);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -130,7 +136,10 @@ export default function CreateSnippetForm({
                   <SelectTrigger>
                     <SelectValue placeholder="Select Language" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="h-[150px] overflow-y-auto"
+                  >
                     {languages.map((lang) => (
                       <SelectItem key={lang} value={lang}>
                         {lang}
@@ -167,16 +176,25 @@ export default function CreateSnippetForm({
               ))}
             </div>
 
-            <Button type="submit" className="w-full bg-red-500 text-white">
-              Create Snippet
+            <Button
+              onClick={handleClose}
+              className="w-[150px] relative left-0 bg-red-500 hover:bg-red-700 text-white"
+            >
+              Close
             </Button>
           </main>
-          <aside className="col-span-3 h-full">
+          <aside className="col-span-3 h-full  flex flex-col gap-3 items-end">
             <Textarea
               placeholder="Write your code here..."
               {...register("sourceCode", { required: true })}
               className="font-mono h-full"
             />
+            <Button
+              type="submit"
+              className="w-[150px] bg-blue-500 hover:bg-blue-700 text-white"
+            >
+              {loading ? "Creating..." : "Create Snippet"}
+            </Button>
           </aside>
         </form>
       </CardContent>

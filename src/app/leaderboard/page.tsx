@@ -29,7 +29,7 @@ const Leaderboard = () => {
     if (!data || !data.getLeaderBoardUsers) return [];
     if (data.getLeaderBoardUsers.error) return [];
     return data.getLeaderBoardUsers.users;
-  }, [data, loading, error, currentUser]);
+  }, [data]);
   if (loading) {
     return (
       <SectionWrapper>
