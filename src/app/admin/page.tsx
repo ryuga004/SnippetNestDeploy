@@ -1,6 +1,6 @@
 "use client";
 
-import CircularLoader from "@/components/Loaders/circularLoader";
+import AdminDashboardSkeleton from "@/components/Loaders/adminDashboardLoader";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { GET_DASHBOARD_DATA } from "@/lib/services";
 import { useQuery } from "@apollo/client";
@@ -81,7 +81,9 @@ const StatCard = ({
 function AdminDashboard() {
   const { data, loading, error } = useQuery(GET_DASHBOARD_DATA);
 
-  if (loading) return <CircularLoader />;
+  if (loading) {
+    return <AdminDashboardSkeleton />;
+  }
   if (error) return <div>Error loading dashboard data.</div>;
 
   const stats = data?.getDashboardData?.result?.stats || {};

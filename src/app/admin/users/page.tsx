@@ -1,9 +1,10 @@
 "use client";
 
-import CircularLoader from "@/components/Loaders/circularLoader";
+import TableLoader from "@/components/Loaders/tableLoader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -37,9 +38,19 @@ export default function UsersPage() {
       refetch();
     }
   };
-  if (loading) {
-    return <CircularLoader />;
-  }
+  if (loading)
+    return (
+      <SectionWrapper>
+        <div className="min-h-screen mx-w-3xl py-12">
+          <header className="container  mx-auto flex h-[25vh] flex-col gap-4">
+            <Skeleton className="h-full w-full" />
+          </header>
+          <main>
+            <TableLoader />
+          </main>
+        </div>
+      </SectionWrapper>
+    );
   if (error) return <p>Error fetching users: {error.message}</p>;
   return (
     <SectionWrapper>

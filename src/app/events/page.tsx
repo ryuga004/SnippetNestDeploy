@@ -1,6 +1,6 @@
 "use client";
 import ContestCard from "@/components/cards/contestCard";
-import CircularLoader from "@/components/Loaders/circularLoader";
+import GridLoader from "@/components/Loaders/gridLoader";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { ContestType } from "@/lib/types";
 import { getContests } from "@/server/scrapper";
@@ -18,7 +18,11 @@ const Event = () => {
     fetchContests();
   }, []);
   if (loading) {
-    return <CircularLoader />;
+    return (
+      <SectionWrapper>
+        <GridLoader />
+      </SectionWrapper>
+    );
   }
   return (
     <SectionWrapper>

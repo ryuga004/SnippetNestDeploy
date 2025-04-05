@@ -14,6 +14,9 @@ export const userResolvers = {
                     orderBy: {
                         points: "desc",
                     },
+                    include : {
+                        stats : true ,
+                    }
                 });
 
                 if (users) {

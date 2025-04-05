@@ -1,6 +1,7 @@
 "use client";
 
 import EditSnippet from "@/components/Forms/editSnippet";
+import GridLoader from "@/components/Loaders/gridLoader";
 import SnippetCard from "@/components/template_card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import useSnippetFilters from "@/hooks/useSnippetFilter";
 import { Snippet } from "@/lib/types";
@@ -46,9 +48,16 @@ export default function SnippetsPage() {
 
   if (snippetsData?.loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <SectionWrapper>
+        <div className="min-h-screen mx-w-3xl py-12">
+          <header className="container px-4 mx-auto flex h-[25vh] flex-col gap-4">
+            <Skeleton className="h-full w-full" />
+          </header>
+          <main>
+            <GridLoader />
+          </main>
+        </div>
+      </SectionWrapper>
     );
   }
 

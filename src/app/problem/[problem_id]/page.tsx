@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { difficultyColors, showToast } from "@/lib";
 
-import CircularLoader from "@/components/Loaders/circularLoader";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   CREATE_SUBMISSION,
   GET_SOLUTION,
@@ -821,7 +821,23 @@ function ProblemInterFace() {
   };
 
   if (ProblemsLoading) {
-    return <CircularLoader />;
+    return (
+      <SectionWrapper>
+        <div className="w-full h-[85vh] flex gap-4">
+          <aside className="w-1/3  rounded-lg ">
+            <Skeleton className="w-full h-full" />
+          </aside>
+          <main className="w-2/3  rounded-lg  flex flex-col gap-4">
+            <aside className="w-full h-3/4 rounded-lg flex flex-col gap-4">
+              <Skeleton className="w-full h-full" />
+            </aside>
+            <main className="w-full h-1/4 rounded-lg    gap-4">
+              <Skeleton className="w-full h-full" />
+            </main>
+          </main>
+        </div>
+      </SectionWrapper>
+    );
   }
 
   if (!problem) {

@@ -2,8 +2,8 @@
 
 import { openEditModalProps } from "@/app/snippets/page";
 import EditSnippet from "@/components/Forms/editSnippet";
-import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { showToast } from "@/lib";
 import { DELETE_SNIPPET } from "@/lib/services";
@@ -22,7 +22,9 @@ const TemplateDetail = () => {
   const [copied, setCopied] = useState(false);
   const [snippet, setSnippet] = useState<Snippet>();
   const { id } = useParams();
-  const snippets = useAppSelector((state) => state.snippets.snippets);
+  const { snippets, loading: snippetLoading } = useAppSelector(
+    (state) => state.snippets
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
@@ -68,7 +70,17 @@ const TemplateDetail = () => {
         Snippet Not Found
       </div>
     );
-  if (loading) return <Loader />;
+  if (loading || snippetLoading) {
+    return (
+      <SectionWrapper>
+        <div className="min-h-screen flex flex-col w-full items-center justify-center  gap-4">
+          <Skeleton className="h-[45vh] w-[70vw]" />
+
+          <Skeleton className="h-[50vh] w-[70vw]" />
+        </div>
+      </SectionWrapper>
+    );
+  }
   return (
     <SectionWrapper>
       <div className=" items-center flex flex-col  ">

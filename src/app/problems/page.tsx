@@ -1,6 +1,7 @@
 "use client";
-import CircularLoader from "@/components/Loaders/circularLoader";
+import TableLoader from "@/components/Loaders/tableLoader";
 import { ProblemsTable } from "@/components/Tables/problemTable";
+import { Skeleton } from "@/components/ui/skeleton";
 import SectionWrapper from "@/hoc/sectionWrapper";
 import { useAppSelector } from "@/redux/redux-hooks";
 
@@ -10,7 +11,18 @@ export default function ProblemsPage() {
   );
 
   if (loading) {
-    return <CircularLoader />;
+    return (
+      <SectionWrapper>
+        <div className="min-h-screen mx-w-3xl py-12">
+          <header className="container  mx-auto flex h-[25vh] flex-col gap-4">
+            <Skeleton className="h-full w-full" />
+          </header>
+          <main>
+            <TableLoader />
+          </main>
+        </div>
+      </SectionWrapper>
+    );
   }
   if (error) {
     console.log("Error in Loading Problems ", error);
