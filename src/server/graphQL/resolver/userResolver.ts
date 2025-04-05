@@ -20,7 +20,7 @@ export const userResolvers = {
                 });
 
                 if (users) {
-                    await Promise.all(users.map(async (user, index) => {
+                    for (const [index, user] of users.entries()) {
                         const stats = await prisma.stats.findUnique({
                             where: { userId: user.id },
                         });
@@ -35,12 +35,11 @@ export const userResolvers = {
                             await prisma.stats.update({
                                 where: { userId: user.id },
                                 data: {
-                                    ...stats,
                                     rank: index + 1,
                                 },
                             });
                         }
-                    }));
+                    }
                 }
 
                 return {
