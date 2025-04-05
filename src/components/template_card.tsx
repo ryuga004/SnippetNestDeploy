@@ -24,17 +24,17 @@ import {
 interface SnippetCardProps {
   snippet: Snippet;
   setOpenEditModal: Dispatch<SetStateAction<openEditModalProps>>;
-  hoveredIndex: number;
-  setHoveredIndex: (i: number) => void;
-  index: number;
+  hoveredIndex?: number;
+  setHoveredIndex?: Dispatch<SetStateAction<number>>;
+  index?: number;
 }
 
 export default function SnippetCard({
   snippet,
   setOpenEditModal,
-  hoveredIndex,
-  setHoveredIndex,
-  index,
+  hoveredIndex = 0,
+  // setHoveredIndex,
+  index = 0,
 }: SnippetCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -73,12 +73,6 @@ export default function SnippetCard({
     >
       <Card
         ref={cardRef}
-        onMouseEnter={(e) => {
-          setHoveredIndex(index);
-
-          e.stopPropagation();
-        }}
-        onMouseLeave={() => setHoveredIndex(0)}
         className="overflow-hidden group border border-gray-700 shadow-md bg-gray-800 max-w-xl "
       >
         <CardHeader className="p-4 flex flex-col">

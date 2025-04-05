@@ -1,11 +1,10 @@
 "use client";
+import AISection from "@/components/ai_Section";
 import FeaturedSnippets from "@/components/featuredSnippet";
 import Hero from "@/components/Hero";
-import { Button } from "@/components/ui/button";
-import MovementWrapper from "@/hoc/Animation/movementWrapper";
+import CodingOverview from "@/components/sections/codingOverview";
 import SectionWrapper from "@/hoc/sectionWrapper";
-import { Sparkles, Star } from "lucide-react";
-import Link from "next/link";
+import { Star } from "lucide-react";
 
 const Home = () => {
   return (
@@ -16,30 +15,11 @@ const Home = () => {
       </SectionWrapper>
 
       <SectionWrapper>
-        <div className="py-20 bg-white rounded-lg">
-          <div className="container px-4 mx-auto">
-            <MovementWrapper direction="none" triggerOnScroll={true}>
-              <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-3xl font-bold mb-6">
-                  Not finding what you need?
-                </h2>
-                <p className="text-xl text-muted-foreground mb-8">
-                  Let our AI create a custom snippet tailored to your specific
-                  requirements. Just describe what you need and we will generate
-                  it for you.
-                </p>
-                <Link href="/generate">
-                  <Button size="lg" className="gap-2">
-                    Try AI Generator
-                    <Sparkles className="w-4 h-4" />
-                  </Button>
-                </Link>
-              </div>
-            </MovementWrapper>
-          </div>
-        </div>
+        <AISection />
       </SectionWrapper>
-
+      <SectionWrapper>
+        <CodingOverview />
+      </SectionWrapper>
       {/* Testimonials Section */}
       <SectionWrapper>
         <div className="container px-4 mx-auto mb-30">
