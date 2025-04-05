@@ -1,4 +1,6 @@
 "use client";
+import CircularLoader from "@/components/Loaders/circularLoader";
+import SectionWrapper from "@/hoc/sectionWrapper";
 import { GET_LEADERBOARD } from "@/lib/services";
 import { useQuery } from "@apollo/client";
 
@@ -17,14 +19,13 @@ interface User {
 const Leaderboard = () => {
   const { loading, error, data } = useQuery(GET_LEADERBOARD);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <CircularLoader />;
   if (error) return <p>Error: {error.message}</p>;
 
   const users: User[] = data.getLeaderBoardUsers.users;
-
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white shadow-md rounded-lg overflow-hidden w-full max-w-2xl">
+    <SectionWrapper>
+      <div className="h-full bg-gray-100 flex flex-col items-center justify-center p-4">
         <h1 className="text-2xl font-bold text-center text-gray-800 py-4">
           Leaderboard
         </h1>
@@ -32,14 +33,22 @@ const Leaderboard = () => {
           <thead>
             <tr>
               <th className="border-b px-4 py-2 text-gray-600">Rank</th>
-              <th className="border-b px-4 py-2 text-gray-600">Name</th>
+              <th className="border-b px-4 py-2 text-gray-600">Username</th>
               <th className="border-b px-4 py-2 text-gray-600">Points</th>
+              <th className="border-b px-4 py-2 text-gray-600">
+                Contributions
+              </th>
+              <th className="border-b px-4 py-2 text-gray-600">
+                Problems Solved
+              </th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">
-                <td className="border-b px-4 py-2">{user.stats?.rank}</td>
+                <td className="border-b px-4 py-2">
+                  {user.stats?.rank || "-"}
+                </td>
                 <td className="border-b px-4 py-2 flex items-center">
                   <img
                     src={user.avatar}
@@ -49,12 +58,18 @@ const Leaderboard = () => {
                   {user.username}
                 </td>
                 <td className="border-b px-4 py-2">{user.points}</td>
+                <td className="border-b px-4 py-2">
+                  {user.stats?.contributions}
+                </td>
+                <td className="border-b px-4 py-2">
+                  {user.stats?.problemSolved}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </SectionWrapper>
   );
 };
 

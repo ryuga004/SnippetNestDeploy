@@ -16,28 +16,29 @@ export const userResolvers = {
                     },
                 });
 
-                // if (users) {
-                //     for (const [index, user] of users.entries()) {
-                //         const stats = await prisma.stats.findUnique({
-                //             where: { userId: user.id },
-                //         });
-                //         if (!stats) {
-                //                 await prisma.stats.create({
-                //                 data: {
-                //                     userId: user.id,
-                //                     rank: index + 1,
-                //                 },
-                //             });
-                //         }else {
-                //             await prisma.stats.update({
-                //                 where: { userId: user.id },
-                //                 data: {
-                //                     rank: index + 1,
-                //                 },
-                //             });
-                //         }
-                //     }
-                // }
+                if (users) {
+                    await Promise.all(users.map(async (user, index) => {
+                        const stats = await prisma.stats.findUnique({
+                            where: { userId: user.id },
+                        });
+                        if (!stats) {
+                            await prisma.stats.create({
+                                data: {
+                                    userId: user.id,
+                                    rank: index + 1,
+                                },
+                            });
+                        } else {
+                            await prisma.stats.update({
+                                where: { userId: user.id },
+                                data: {
+                                    ...stats,
+                                    rank: index + 1,
+                                },
+                            });
+                        }
+                    }));
+                }
 
                 return {
                     success: true,
