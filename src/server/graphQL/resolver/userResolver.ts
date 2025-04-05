@@ -19,28 +19,18 @@ export const userResolvers = {
                     }
                 });
 
-                if (users) {
-                    for (const [index, user] of users.entries()) {
-                        const stats = await prisma.stats.findUnique({
+                if (users && users.length > 0) {
+                    const statOps = users.map((user, index) => {
+                        const rank = index + 1;
+                        return prisma.stats.upsert({
                             where: { userId: user.id },
+                            update: { rank },
+                            create: { userId: user.id, rank },
                         });
-                        if (!stats) {
-                            await prisma.stats.create({
-                                data: {
-                                    userId: user.id,
-                                    rank: index + 1,
-                                },
-                            });
-                        } else {
-                            await prisma.stats.update({
-                                where: { userId: user.id },
-                                data: {
-                                    rank: index + 1,
-                                },
-                            });
-                        }
-                    }
+                    });
+                    await Promise.all(statOps);
                 }
+        
 
                 return {
                     success: true,
