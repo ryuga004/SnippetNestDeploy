@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CreateSnippetForm from "./Forms/createSnippet";
 import LoginRegister from "./Forms/login";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -42,16 +42,11 @@ const Navbar = () => {
   const [openModal, setOpenModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState<boolean>(false);
+
   const { isLoggedIn, isAdmin, user } = useAppSelector((state) => state.user);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const [openLoginModal, setOpenLoginModal] = useState(false);
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 16);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const router = useRouter();
   useEffect(() => {
@@ -74,53 +69,54 @@ const Navbar = () => {
         dispatch(removeUser());
         setMenuOpen(false);
         showToast(res.data.logoutUser.message, "success");
+        router.push("/");
       } else {
-        console.log("Logout Failed");
+        showToast(res.data.logoutUser.message, "error");
       }
     } catch (error) {
       console.error(error);
     }
   };
-  const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
+  const [showAdminPanel, setShowAdminPanel] = useState<boolean>(isAdmin);
   // const hideBackButton = pathname === "/" || window.history.length <= 1;
   return (
     <>
       <nav
-        className={`${
-          scrolled ? "bg-transparent" : "bg-gray-900 shadow-md"
-        } absolute w-full  px-8 py-4 top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50`}
+        className={
+          " bg-gray-900 shadow-md  absolute w-full  px-8 py-4 top-0 left-0 flex items-center justify-between px-6 md:px-10 py-4 z-50"
+        }
       >
         <div className="flex flex-center">
-          {/* {!hideBackButton && (
-                        // <Button variant="default" className="flex absolute left-0 items-center gap-2" onClick={() => router.back()}>
-                        //     <ArrowLeft className="w-5 h-5" />
-
-                        // </Button>)} */}
-          <Link
-            href="/"
-            className={`${
-              scrolled ? "text-red-800" : "text-white"
-            } text-xl flex items-center gap-3 font-bold`}
-          >
-            <Avatar className="cursor-pointer">
-              <AvatarImage src="/logo.png" alt="Logo" />
-              <AvatarFallback>S</AvatarFallback>
-            </Avatar>
-            <span>SnippetNest</span>
-          </Link>
+          <div className="flex items-start justify-between  w-[300px]">
+            <Link
+              href="/"
+              className={`
+              text-white
+            text-xl flex items-center gap-3 font-bold`}
+            >
+              <Avatar className="cursor-pointer">
+                <AvatarImage src="/logo.png" alt="Logo" />
+                <AvatarFallback>S</AvatarFallback>
+              </Avatar>
+              <span>SnippetNest</span>
+            </Link>
+          </div>
+          {isAdmin && (
+            <Button
+              onClick={() => {
+                setShowAdminPanel(!showAdminPanel);
+                router.push(!showAdminPanel ? "/admin" : "/");
+              }}
+              asChild
+              className="flex items-center bg-red-800 justify-center p-2 rounded-lg transition-all duration-300 hover:bg-red-900 cursor-pointer"
+            >
+              <UserCog
+                size={70}
+                className="text-white bg-blue-500 rounded-md "
+              />
+            </Button>
+          )}
         </div>
-        {isAdmin && (
-          <Button
-            onClick={() => {
-              setShowAdminPanel(!showAdminPanel);
-              router.push(!showAdminPanel ? "/admin" : "/");
-            }}
-            asChild
-            className="flex items-center bg-red-800 justify-center p-2 rounded-lg transition-all duration-300 hover:bg-red-900 cursor-pointer"
-          >
-            <UserCog size={70} className="text-white bg-blue-500 rounded-md " />
-          </Button>
-        )}
         <div className="hidden md:flex gap-6">
           {showAdminPanel ? (
             <>
@@ -171,9 +167,7 @@ const Navbar = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div className="flex justify-center items-center gap-1 cursor-pointer">
-                    <Avatar
-                      className={`${scrolled ? "bg-gray-400" : "bg-white"}`}
-                    >
+                    <Avatar className={"bg-white"}>
                       <AvatarImage
                         src={isLoggedIn ? user.avatar : "/user_logo.png"}
                         alt="User Avatar"
@@ -308,7 +302,7 @@ const NavLink = ({
   children: React.ReactNode;
   onClick?: () => void;
 }) => {
-  const isActive = pathname === href;
+  const isActive = useMemo(() => pathname === href, [pathname, href]);
   return (
     <Link
       href={href}

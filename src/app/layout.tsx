@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SnippetNest",
-  description: "SnippetNest is an online coding website to run, compile, and share code snippets.",
+  description: "SnippetNest is a ful stack online coding website to run, compile, and share code snippets.",
   icons: {
     icon: "/logo.png",
   },
