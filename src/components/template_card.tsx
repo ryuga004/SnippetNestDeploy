@@ -5,10 +5,11 @@ import { Snippet } from "@/lib/types";
 import { useAppDispatch, useAppSelector } from "@/redux/redux-hooks";
 import { removeSnippet } from "@/redux/slice/snippetSlice";
 import { motion } from "framer-motion";
+import gsap from "gsap";
 import { EllipsisVertical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -23,12 +24,31 @@ import {
 interface SnippetCardProps {
   snippet: Snippet;
   setOpenEditModal: Dispatch<SetStateAction<openEditModalProps>>;
+  hoveredIndex: number;
+  setHoveredIndex: (i: number) => void;
+  index: number;
 }
 
 export default function SnippetCard({
   snippet,
   setOpenEditModal,
+  hoveredIndex,
+  setHoveredIndex,
+  index,
 }: SnippetCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const isHovered = hoveredIndex === index;
+    const isOther = hoveredIndex !== null && hoveredIndex !== index;
+
+    gsap.to(cardRef.current, {
+      scale: isHovered ? 1.02 : isOther ? 0.9 : 1,
+      opacity: 1,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  }, [hoveredIndex, index]);
+
   const { isLoggedIn, user } = useAppSelector((state) => state.user);
   const [owner, setOwner] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -51,7 +71,16 @@ export default function SnippetCard({
       whileTap={{ scale: 0.98 }}
       className="w-full"
     >
-      <Card className="overflow-hidden group border border-gray-700 shadow-md bg-gray-800 max-w-xl ">
+      <Card
+        ref={cardRef}
+        onMouseEnter={(e) => {
+          setHoveredIndex(index);
+
+          e.stopPropagation();
+        }}
+        onMouseLeave={() => setHoveredIndex(0)}
+        className="overflow-hidden group border border-gray-700 shadow-md bg-gray-800 max-w-xl "
+      >
         <CardHeader className="p-4 flex flex-col">
           <div className="flex justify-between">
             <h3 className="font-semibold text-xl text-white">
