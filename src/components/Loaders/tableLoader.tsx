@@ -11,12 +11,10 @@ import {
 const TableLoader: React.FC = () => {
   return (
     <div className="container py-8">
-      {/* Page Heading Skeleton */}
       <div className="flex justify-between items-center mb-8">
         <Skeleton className="h-10 w-1/3 rounded-lg" />
       </div>
 
-      {/* Table Skeleton */}
       <div className="bg-white rounded-lg shadow">
         <Table>
           <TableHeader>

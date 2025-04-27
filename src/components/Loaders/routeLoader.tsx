@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { usePathname } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
-// yet to implement with frontend ....
+
 const RouteLoader = () => {
   const pathname = usePathname();
   const [progress, setProgress] = useState(0);
@@ -16,7 +16,7 @@ const RouteLoader = () => {
 
     return () => {
       setProgress(100);
-      setTimeout(() => setProgress(0), 300); // Reset
+      setTimeout(() => setProgress(0), 300);
     };
   }, [pathname]);
 
