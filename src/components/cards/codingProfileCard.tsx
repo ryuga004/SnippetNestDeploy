@@ -48,7 +48,6 @@ const CodingProfileCard: React.FC<CodingProfileCardProps> = ({
       return await getCodeforcesRating("Ryuga01");
     };
     fetchProfile().then((data) => {
-      // console.log(data);
       setProfile(data);
     });
   }, [handle]);
