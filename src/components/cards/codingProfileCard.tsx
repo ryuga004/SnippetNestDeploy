@@ -71,7 +71,7 @@ const CodingProfileCard: React.FC<CodingProfileCardProps> = ({
         <div className="flex justify-between">
           <span className="text-gray-500 dark:text-gray-400">Rating:</span>
           <span className="font-semibold">
-            {profile.rating} (Max: {profile.maxRating})
+            {profile?.rating} (Max: {profile?.maxRating})
           </span>
         </div>
 
