@@ -3,7 +3,7 @@
 const SkeletonBox = ({ className }: { className: string }) => (
   <div className={`bg-gray-200 animate-pulse rounded ${className}`} />
 );
-// Admin Dashboard Skeleton =>
+
 const AdminDashboardSkeleton = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
