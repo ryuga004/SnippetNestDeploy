@@ -18,7 +18,7 @@ const AdminDashboardSkeleton = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {[...Array(4)].map((_, i) => (
+        {[...Array(4)].map((_, i: number) => (
           <div key={i} className="bg-white p-6 rounded-lg shadow-sm">
             <SkeletonBox className="w-32 h-4 mb-4" />
             <SkeletonBox className="w-full h-[250px]" />
