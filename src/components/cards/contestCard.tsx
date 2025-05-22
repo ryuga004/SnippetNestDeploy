@@ -66,7 +66,7 @@ export default function ContestCard({ contest }: { contest: ContestType }) {
             <span>{timeLeft}</span>
           </div>
         </div>
-        {/* edited comments  */}
+
         <a href={contest.link} target="_blank" rel="noopener noreferrer">
           <Button className="w-full bg-primary text-white hover:bg-primary/80">
             Join Contest
