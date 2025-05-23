@@ -7,7 +7,7 @@ import FloatingLanguages from "./floatingLanguages";
 import TypingCode from "./typingCode";
 import SubmitAnimation from "./submitAnimation";
 import RewardDisplay from "./rewardDisplay";
-// animationCodingFlow ....
+
 const AnimatedCodingFlow = () => {
   const [step, setStep] = useState(0);
   const [started, setStarted] = useState(false);
