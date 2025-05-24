@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCodeforcesRating } from "@/server/scrapper/codeForces";
 import { ExternalLink } from "lucide-react";
 import React, { useEffect, useState } from "react";
-
+// Coding Profile interface
 export interface CodingProfile {
   handle: string;
   firstName: string;
