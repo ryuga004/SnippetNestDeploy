@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useState } from "react";
 import {
   SiCplusplus,
@@ -19,7 +19,7 @@ const languages = [
   { name: "Rust", icon: <SiRust />, color: "#000000" },
 ];
 
-const bubbleVariants = {
+const bubbleVariants : Variants = {
   float: {
     y: [0, -10, 0],
     transition: {
